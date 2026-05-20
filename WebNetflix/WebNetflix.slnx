@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="Domain/Domain.csproj" Id="b31997ab-2bd0-44b4-bb14-6063ed538947" />
   <Project Path="WebNetflix/WebNetflix.csproj" />
 </Solution>
