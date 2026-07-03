@@ -1,0 +1,115 @@
+.series-page {
+    padding: 20px;
+    color: white;
+}
+
+.series-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.series-header h1 {
+    font-size: 28px;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+}
+
+.actions input {
+    padding: 8px;
+    border-radius: 6px;
+    border: none;
+    outline: none;
+    background: #1f1f1f;
+    color: white;
+}
+
+.add-btn {
+    background: #E50914;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.add-btn:hover {
+    background: #c40812;
+}
+
+.table-container {
+    background: #1f1f1f;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #333;
+}
+
+th {
+    color: #aaa;
+}
+
+.status {
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status.published {
+    background: green;
+    color: white;
+}
+
+.status.draft {
+    background: orange;
+    color: white;
+}
+
+td.actions {
+    display: flex;
+    gap: 8px;
+}
+
+.edit {
+    background: #333;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.edit:hover {
+    background: #555;
+}
+
+.delete {
+    background: #E50914;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.delete:hover {
+    background: #c40812;
+}
