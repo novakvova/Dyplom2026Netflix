@@ -1,0 +1,90 @@
+.movies-page {
+    padding: 20px;
+    color: white;
+}
+
+.movies-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.movies-header h1 {
+    font-size: 28px;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+}
+
+.actions input {
+    padding: 8px;
+    border-radius: 6px;
+    border: none;
+    outline: none;
+    background: #1f1f1f;
+    color: white;
+}
+
+.add-btn {
+    background: #E50914;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.table-container {
+    background: #1f1f1f;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #333;
+}
+
+th {
+    color: #aaa;
+}
+
+.status {
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+}
+
+.status.published {
+    background: green;
+}
+
+.status.draft {
+    background: orange;
+}
+
+.edit {
+    background: #333;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+.delete {
+    background: #E50914;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    cursor: pointer;
+}
