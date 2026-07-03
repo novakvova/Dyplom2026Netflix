@@ -1,0 +1,34 @@
+[
+  {
+    "Email": "admin@example.com",
+    "FirstName": "Євген",
+    "LastName": "Фурманець",
+    "Image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQk397YDPou9mISiDsvw83SvB7VGDziJ2uCkd3wXH7j2w&s=10",
+    "Password": "Admin123!",
+    "Roles": [ "Admin" ]
+  },
+  {
+    "Email": "ryzuk@example.com",
+    "FirstName": "Матвій",
+    "LastName": "Рижук",
+    "Image": "https://st5.depositphotos.com/2760050/74592/i/450/depositphotos_745925384-stock-photo-businessman-portrait-outdoor-smiling-mature.jpg",
+    "Password": "bb123456",
+    "Roles": [ "User" ]
+  },
+  {
+    "Email": "zbyrun@example.com",
+    "FirstName": "Михайло",
+    "LastName": "Збирун",
+    "Image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrHs5Wxx0qUoNKfkJin4DgEkiAyYHkGe1DAeLQ5GIoCEGF-ns7AfTRT8aa&s=10",
+    "Password": "password",
+    "Roles": [ "User" ]
+  },
+  {
+    "Email": "yefichuk@example.com",
+    "FirstName": "Дмитро",
+    "LastName": "Єфімчук",
+    "Image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTepmp-O5Nqm_q6GNzpZ9aAzp11Bkx9raM20BJRF5j3ZPhWlYd4OSiT6rI&s=10",
+    "Password": "password",
+    "Roles": [ "User" ]
+  }
+]
