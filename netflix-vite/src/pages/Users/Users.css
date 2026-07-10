@@ -1,0 +1,57 @@
+
+.table-reason-input {
+    padding: 6px 10px;
+    border-radius: 4px;
+    border: 1px solid #E50914;
+    background: #141414;
+    color: white;
+    outline: none;
+    width: 90%;
+    font-size: 14px;
+}
+
+.save-btn {
+    background: #2e7d32;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.block-btn{
+    background: #E50914;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.unblock-btn{
+    background: #2e7d32;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.save-btn:hover {
+    background: #1b5e20;
+}
+
+.cancel-btn {
+    background: #424242;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.cancel-btn:hover {
+    background: #616161;
+}
