@@ -1,0 +1,114 @@
+.reviews-page {
+    padding: 20px;
+    color: white;
+}
+
+.reviews-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.reviews-header h1 {
+    font-size: 28px;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+}
+
+.actions input {
+    padding: 8px;
+    border-radius: 6px;
+    border: none;
+    outline: none;
+    background: #1f1f1f;
+    color: white;
+    width: 220px;
+}
+
+.table-container {
+    background: #1f1f1f;
+    border-radius: 10px;
+    padding: 10px;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #333;
+    vertical-align: middle;
+}
+
+th {
+    color: #aaa;
+}
+
+.comment-cell {
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.status {
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Стилі для статусів відгуків */
+.status.approved {
+    background: #2e7d32;
+    color: white;
+}
+
+.status.pending {
+    background: #ef6c00;
+    color: white;
+}
+
+td.actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* Кнопка підтвердження */
+.approve-btn {
+    background: #2e7d32;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+    font-weight: 500;
+}
+
+.approve-btn:hover {
+    background: #1b5e20;
+}
+
+.delete {
+    background: #E50914;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.delete:hover {
+    background: #c40812;
+}
