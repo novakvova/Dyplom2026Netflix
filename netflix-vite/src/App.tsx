@@ -6,6 +6,8 @@ import Dashboard from "./pages/Dashboard/Dashboard.tsx";
 import Reviews from "./pages/Reviews/Reviews.tsx";
 import Users from "./pages/Users/Users.tsx";
 import Subscriptions from "./pages/Subscriptions/Subscriptions.tsx";
+import Settings from "./pages/Settings/Settings.tsx";
+import Analytics from "./pages/Analytics/Analytics.tsx";
 const App = () => {
     return (
         <BrowserRouter>
@@ -24,6 +26,10 @@ const App = () => {
                     <Route path="/users" element={<Users/>}/>
 
                     <Route path="/subscriptions" element={<Subscriptions/>}/>
+
+                    <Route path="/settings" element={<Settings/>}/>
+
+                    <Route path="/analytics" element={<Analytics/>}/>
 
                 </Route>
 
