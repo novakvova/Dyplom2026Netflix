@@ -1,0 +1,93 @@
+.analytics {
+    padding: 20px;
+    color: white;
+}
+
+.analytic-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.analytic-header h1 {
+    font-size: 28px;
+    margin: 0;
+}
+
+.analytic-header p {
+    color: #aaa;
+    margin-top: 5px;
+}
+
+.select-filter {
+    background: #1f1f1f;
+    color: white;
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 8px 12px;
+    outline: none;
+    cursor: pointer;
+}
+
+/* Виправлена назва класу сітки карточок */
+.analytics-grid-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.analytics-card {
+    background: #1f1f1f;
+    padding: 16px;
+    border-radius: 10px;
+}
+
+.analytics-card h4 {
+    color: #aaa;
+    font-size: 13px;
+    margin: 0 0 8px 0;
+}
+
+.analytics-card h2 {
+    font-size: 24px;
+    margin: 0 0 6px 0;
+}
+
+.analytics-card span {
+    font-size: 12px;
+    color: #aaa;
+}
+
+.analytics-card span.positive {
+    color: #2e7d32;
+}
+
+.analytics-card span.negative {
+    color: #c62828;
+}
+
+.chart-card {
+    background: #1f1f1f;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+.card-header h2 {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+@media (max-width: 900px) {
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,109 @@
+.settings-page {
+    padding: 20px;
+    color: white;
+    max-width: 800px;
+}
+
+.settings-header {
+    margin-bottom: 25px;
+}
+
+.settings-header h1 { font-size: 28px; margin: 0; }
+.settings-header p { color: #aaa; margin-top: 5px; }
+
+.save-alert {
+    background: #2e7d32;
+    color: white;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.settings-section {
+    background: #1f1f1f;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.settings-section h2 {
+    font-size: 18px;
+    margin-top: 0;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 8px;
+    color: #E50914;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    font-size: 14px;
+    color: #ccc;
+}
+
+.form-group input {
+    background: #141414;
+    border: 1px solid #333;
+    color: white;
+    padding: 10px;
+    border-radius: 6px;
+    outline: none;
+    font-size: 14px;
+}
+
+.form-group input:focus {
+    border-color: #E50914;
+}
+
+.toggle-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #2a2a2a;
+}
+
+.toggle-group:last-child {
+    border-bottom: none;
+}
+
+.toggle-group strong {
+    display: block;
+    font-size: 14px;
+}
+
+.toggle-group p {
+    margin: 4px 0 0 0;
+    font-size: 12px;
+    color: #888;
+}
+
+.toggle-checkbox {
+    width: 20px;
+    height: 20px;
+    accent-color: #E50914;
+    cursor: pointer;
+}
+
+.save-settings-btn {
+    background: #E50914;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.save-settings-btn:hover {
+    background: #c40812;
+}
