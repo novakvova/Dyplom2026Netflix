@@ -95,7 +95,11 @@ builder.Services.AddOpenApi(options =>
     });
 });
 
+builder.Services.AddCors();
+
 var app = builder.Build();
+
+app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
 app.MapOpenApi();
 
