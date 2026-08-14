@@ -3,7 +3,7 @@
 namespace Domain.Entities.Identity;
 
 public class UserEntity : IdentityUser<long>
-{
+{   
     public DateTime DateCreated { get; set; } = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
     public string? FirstName { get; set; } = null;
     public string? LastName { get; set; } = null;
