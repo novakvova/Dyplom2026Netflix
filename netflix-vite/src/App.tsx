@@ -8,7 +8,21 @@ import Users from "./pages/Users/Users.tsx";
 import Subscriptions from "./pages/Subscriptions/Subscriptions.tsx";
 import Settings from "./pages/Settings/Settings.tsx";
 import Analytics from "./pages/Analytics/Analytics.tsx";
+import {useEffect} from "react";
+import axios from 'axios';
 const App = () => {
+
+    useEffect(() => {
+        console.log("App mounted");
+        axios.get('http://localhost:5127/api/users/list')
+        .then(response => {
+            console.log("users list", response.data);
+        })
+        .catch(error => {
+            console.error('Error fetching users:', error);
+        });
+    },[]);
+
     return (
         <BrowserRouter>
             <Routes>
