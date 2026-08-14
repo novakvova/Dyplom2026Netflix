@@ -1,69 +1,105 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import "./Users.css";
 
 type User = {
     id: number;
-    user: string;
-    name: string;
-    surname: string;
+    fullName: string;
     email: string;
     status: "Normal" | "Blocked";
     whyBlocked?: string;
 };
 
-const initialUsers: User[] = [
-    { id: 1, name: "John", surname: "Doe", user: "John_Doe", email: "john_doe@gmail.com", status: "Blocked", whyBlocked: "Bad comment" },
-    { id: 2, name: "Alex", surname: "Hamm", user: "Alex99", email: "Alex99@gmail.com", status: "Normal" },
-    { id: 3, name: "Fred", surname: "Kane", user: "MovieFan", email: "FredMovie_Fan@gmail.com", status: "Normal" },
-    { id: 4, name: "Harry", surname: "Benner", user: "DarKnight", email: "DarKnight@gmail.com", status: "Normal" },
-    { id: 5, name: "Kate", surname: "Wensley", user: "Kate_W", email: "Kate_W@gmail.com", status: "Normal" },
-];
-
 const Users: React.FC = () => {
-    const [users, setUsers] = useState<User[]>(initialUsers);
+    const [users, setUsers] = useState<User[]>([]);
     const [search, setSearch] = useState("");
+
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
     const [editingUserId, setEditingUserId] = useState<number | null>(null);
     const [blockReasonInput, setBlockReasonInput] = useState("");
 
+    // Отримання користувачів з API
+    useEffect(() => {
+        axios
+            .get("http://localhost:5127/api/users/list")
+            .then((response) => {
+                console.log("Users from API:", response.data);
+
+                setUsers(response.data);
+            })
+            .catch((error) => {
+                console.error("Error fetching users:", error);
+                setError("Failed to load users");
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }, []);
+
+    // Почати блокування
     const startBlocking = (id: number) => {
         setEditingUserId(id);
-        setBlockReasonInput(""); // очищуємо інпут перед введенням
+        setBlockReasonInput("");
     };
 
+    // Зберегти блокування
     const saveBlockStatus = (id: number) => {
-        setUsers(prevUsers =>
-            prevUsers.map(user =>
+        setUsers((prevUsers) =>
+            prevUsers.map((user) =>
                 user.id === id
-                    ? { ...user, status: "Blocked", whyBlocked: blockReasonInput.trim() || "Violation of terms" }
+                    ? {
+                        ...user,
+                        status: "Blocked",
+                        whyBlocked:
+                            blockReasonInput.trim() ||
+                            "Violation of terms",
+                    }
                     : user
             )
         );
-        setEditingUserId(null); // закриваємо режим редагування
+
+        setEditingUserId(null);
+        setBlockReasonInput("");
     };
 
+    // Розблокувати користувача
     const handleUnblock = (id: number) => {
-        setUsers(prevUsers =>
-            prevUsers.map(user =>
-                user.id === id ? { ...user, status: "Normal", whyBlocked: undefined } : user
+        setUsers((prevUsers) =>
+            prevUsers.map((user) =>
+                user.id === id
+                    ? {
+                        ...user,
+                        status: "Normal",
+                        whyBlocked: undefined,
+                    }
+                    : user
             )
         );
     };
 
+    // Скасувати блокування
     const cancelBlocking = () => {
         setEditingUserId(null);
+        setBlockReasonInput("");
     };
 
-    // Фільтрація користувачів
-    const filteredUsers = users.filter(user =>
-        user.name.toLowerCase().includes(search.toLowerCase()) ||
-        user.surname.toLowerCase().includes(search.toLowerCase()) ||
-        user.user.toLowerCase().includes(search.toLowerCase()) ||
-        user.email.toLowerCase().includes(search.toLowerCase())
+    // Пошук користувачів
+    const filteredUsers = users.filter((user) =>
+        [
+            user.fullName,
+            user.user,
+            user.email,
+        ].some((value) =>
+            value?.toLowerCase().includes(search.toLowerCase())
+        )
     );
 
     return (
         <div className="users-page">
+
+            {/* HEADER */}
             <div className="users-header">
                 <h1>Registered Users</h1>
 
@@ -77,73 +113,176 @@ const Users: React.FC = () => {
                 </div>
             </div>
 
+            {/* ERROR */}
+            {error && (
+                <div className="error-message">
+                    {error}
+                </div>
+            )}
+
+            {/* TABLE */}
             <div className="table-container">
-                <table>
-                    <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Full Name</th>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th>Status</th>
-                        <th>Block Reason</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
 
-                    <tbody>
-                    {filteredUsers.map((u) => {
-                        const isEditingThisUser = editingUserId === u.id;
+                {loading ? (
+                    <div className="loading">
+                        Loading users...
+                    </div>
+                ) : filteredUsers.length === 0 ? (
+                    <div className="no-users">
+                        No users found
+                    </div>
+                ) : (
+                    <table>
 
-                        return (
-                            <tr key={u.id}>
-                                <td>{u.id}</td>
-                                <td>{u.name} {u.surname}</td>
-                                <td><strong>{u.user}</strong></td>
-                                <td>{u.email}</td>
-                                <td>
-                                        <span className={`status ${u.status.toLowerCase()}`}>
-                                            {u.status}
-                                        </span>
-                                </td>
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Block Reason</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
 
-                                <td className="reason-cell">
-                                    {isEditingThisUser ? (
-                                        <input
-                                            type="text"
-                                            className="table-reason-input"
-                                            placeholder="Enter reason..."
-                                            value={blockReasonInput}
-                                            onChange={(e) => setBlockReasonInput(e.target.value)}
-                                            autoFocus
-                                        />
-                                    ) : (
-                                        u.status === "Blocked" ? u.whyBlocked : "—"
-                                    )}
-                                </td>
+                        <tbody>
 
-                                <td className="actions">
-                                    {isEditingThisUser ? (
-                                        <>
-                                            <button className="save-btn" onClick={() => saveBlockStatus(u.id)}>Save</button>
-                                            <button className="cancel-btn" onClick={cancelBlocking}>Cancel</button>
-                                        </>
-                                    ) : (
-                                        <>
-                                            {u.status === "Normal" ? (
-                                                <button className="block-btn" onClick={() => startBlocking(u.id)}>Block</button>
-                                            ) : (
-                                                <button className="unblock-btn" onClick={() => handleUnblock(u.id)}>Unblock</button>
-                                            )}
-                                        </>
-                                    )}
-                                </td>
-                            </tr>
-                        );
-                    })}
-                    </tbody>
-                </table>
+                        {filteredUsers.map((u) => {
+
+                            const isEditingThisUser =
+                                editingUserId === u.id;
+
+                            return (
+                                <tr key={u.id}>
+
+                                    {/* ID */}
+                                    <td>
+                                        {u.id}
+                                    </td>
+
+                                    {/* FULL NAME */}
+                                    <td>
+                                        {u.fullName}
+                                    </td>
+
+
+
+                                    {/* EMAIL */}
+                                    <td>
+                                        {u.email}
+                                    </td>
+
+                                    {/* STATUS */}
+                                    <td>
+                                    <span
+                                        className={`status ${(u.status || "Normal").toLowerCase()}`}
+                                    >
+                                        {u.status || "Normal"}
+                                    </span>
+                                    </td>
+
+                                    {/* BLOCK REASON */}
+                                    <td className="reason-cell">
+
+                                        {isEditingThisUser ? (
+
+                                            <input
+                                                type="text"
+                                                className="table-reason-input"
+                                                placeholder="Enter reason..."
+                                                value={blockReasonInput}
+                                                onChange={(e) =>
+                                                    setBlockReasonInput(
+                                                        e.target.value
+                                                    )
+                                                }
+                                                autoFocus
+                                            />
+
+                                        ) : (
+
+                                            u.status === "Blocked"
+                                                ? u.whyBlocked
+                                                : "—"
+
+                                        )}
+
+                                    </td>
+
+                                    {/* ACTIONS */}
+                                    <td className="actions">
+
+                                        {isEditingThisUser ? (
+
+                                            <>
+                                                <button
+                                                    className="save-btn"
+                                                    onClick={() =>
+                                                        saveBlockStatus(
+                                                            u.id
+                                                        )
+                                                    }
+                                                >
+                                                    Save
+                                                </button>
+
+                                                <button
+                                                    className="cancel-btn"
+                                                    onClick={
+                                                        cancelBlocking
+                                                    }
+                                                >
+                                                    Cancel
+                                                </button>
+                                            </>
+
+                                        ) : (
+
+                                            <>
+                                                {u.status === "Normal" ? (
+
+                                                    <button
+                                                        className="block-btn"
+                                                        onClick={() =>
+                                                            startBlocking(
+                                                                u.id
+                                                            )
+                                                        }
+                                                    >
+                                                        Block
+                                                    </button>
+
+                                                ) : (
+
+                                                    <button
+                                                        className="unblock-btn"
+                                                        onClick={() =>
+                                                            handleUnblock(
+                                                                u.id
+                                                            )
+                                                        }
+                                                    >
+                                                        Unblock
+                                                    </button>
+
+                                                )}
+                                            </>
+
+                                        )}
+
+                                    </td>
+
+                                </tr>
+                            );
+                        })}
+
+                        </tbody>
+
+                    </table>
+                )}
+
             </div>
+
         </div>
     );
 };

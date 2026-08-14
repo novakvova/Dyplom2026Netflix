@@ -1,49 +1,70 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import AdminLayout from "./layout/AdminLayout";
+
+import Dashboard from "./pages/Dashboard/Dashboard.tsx";
 import Movies from "./pages/Movies/Movies";
 import Series from "./pages/Series/Series.tsx";
-import Dashboard from "./pages/Dashboard/Dashboard.tsx";
 import Reviews from "./pages/Reviews/Reviews.tsx";
 import Users from "./pages/Users/Users.tsx";
 import Subscriptions from "./pages/Subscriptions/Subscriptions.tsx";
 import Settings from "./pages/Settings/Settings.tsx";
 import Analytics from "./pages/Analytics/Analytics.tsx";
-import {useEffect} from "react";
-import axios from 'axios';
+
 const App = () => {
-
-    useEffect(() => {
-        console.log("App mounted");
-        axios.get('http://localhost:5127/api/users/list')
-        .then(response => {
-            console.log("users list", response.data);
-        })
-        .catch(error => {
-            console.error('Error fetching users:', error);
-        });
-    },[]);
-
     return (
         <BrowserRouter>
             <Routes>
 
                 <Route element={<AdminLayout />}>
 
-                    <Route path="/" element={<Dashboard/>} />
+                    {/* Dashboard */}
+                    <Route
+                        path="/"
+                        element={<Dashboard />}
+                    />
 
-                    <Route path="/movies" element={<Movies />} />
+                    {/* Movies */}
+                    <Route
+                        path="/movies"
+                        element={<Movies />}
+                    />
 
-                    <Route path="/series" element={<Series/>}/>
+                    {/* Series */}
+                    <Route
+                        path="/series"
+                        element={<Series />}
+                    />
 
-                    <Route path="/reviews" element={<Reviews/>}/>
+                    {/* Reviews */}
+                    <Route
+                        path="/reviews"
+                        element={<Reviews />}
+                    />
 
-                    <Route path="/users" element={<Users/>}/>
+                    {/* Users */}
+                    <Route
+                        path="/users"
+                        element={<Users />}
+                    />
 
-                    <Route path="/subscriptions" element={<Subscriptions/>}/>
+                    {/* Subscriptions */}
+                    <Route
+                        path="/subscriptions"
+                        element={<Subscriptions />}
+                    />
 
-                    <Route path="/settings" element={<Settings/>}/>
+                    {/* Settings */}
+                    <Route
+                        path="/settings"
+                        element={<Settings />}
+                    />
 
-                    <Route path="/analytics" element={<Analytics/>}/>
+                    {/* Analytics */}
+                    <Route
+                        path="/analytics"
+                        element={<Analytics />}
+                    />
 
                 </Route>
 
