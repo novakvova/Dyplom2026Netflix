@@ -10,11 +10,18 @@ import Users from "./pages/Users/Users.tsx";
 import Subscriptions from "./pages/Subscriptions/Subscriptions.tsx";
 import Settings from "./pages/Settings/Settings.tsx";
 import Analytics from "./pages/Analytics/Analytics.tsx";
+import HomePage from "./pages/Home/HomePage.tsx";
 
 const App = () => {
     return (
         <BrowserRouter>
             <Routes>
+                <Route path={"/"} >
+                    <Route
+                        index
+                        element={<HomePage />}
+                    />
+                </Route>
 
                 <Route path={"admin"} element={<AdminLayout />}>
 
