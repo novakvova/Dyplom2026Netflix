@@ -15,44 +15,45 @@ const menuItems = [
     {
         title: "Dashboard",
         icon: <MdDashboard />,
-        path:"/"
+        path: "/admin",
+        end: true // <-- важливо: щоб не залишався активним на під-роутах
     },
     {
-        title:"Movies",
+        title: "Movies",
         icon: <MdMovie />,
-        path:"/movies"
+        path: "/admin/movies"
     },
     {
-        title:"Series",
+        title: "Series",
         icon: <FaTv />,
-        path:"/series"
+        path: "/admin/series"
     },
     {
-        title:"Users",
+        title: "Users",
         icon: <MdPeople />,
-        path:"/users"
+        path: "/admin/users"
     },
     {
-        title:"Subscriptions",
+        title: "Subscriptions",
         icon: <BsCreditCard />,
-        path:"/subscriptions"
+        path: "/admin/subscriptions"
     },
     {
-        title:"Reviews",
+        title: "Reviews",
         icon: <BsStarFill />,
-        path:"/reviews"
+        path: "/admin/reviews"
     },
     {
-      title:"Analytics",
-      icon: <MdAnalytics />,
-      path:"/analytics"
+        title: "Analytics",
+        icon: <MdAnalytics />,
+        path: "/admin/analytics"
     },
     {
-        title:"Settings",
+        title: "Settings",
         icon: <MdSettings />,
-        path:"/settings"
+        path: "/admin/settings"
     }
-    ];
+];
 
 const Sidebar: React.FC = () => {
     return (
@@ -65,11 +66,14 @@ const Sidebar: React.FC = () => {
                     <li key={index}>
                         <NavLink
                             to={item.path}
-                            className={({isActive}) => isActive ? `menu-item active` : `menu-item`}
+                            end={item.end}
+                            className={({ isActive }) =>
+                                isActive ? "menu-item active" : "menu-item"
+                            }
                         >
                             <div className="icon">{item.icon}</div>
                             <span>{item.title}</span>
-                            </NavLink>
+                        </NavLink>
                     </li>
                 ))}
             </ul>
@@ -83,6 +87,7 @@ const Sidebar: React.FC = () => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
+
 export default Sidebar;

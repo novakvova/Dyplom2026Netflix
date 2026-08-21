@@ -16,53 +16,53 @@ const App = () => {
         <BrowserRouter>
             <Routes>
 
-                <Route element={<AdminLayout />}>
+                <Route path={"admin"} element={<AdminLayout />}>
 
                     {/* Dashboard */}
                     <Route
-                        path="/"
+                        index
                         element={<Dashboard />}
                     />
 
                     {/* Movies */}
                     <Route
-                        path="/movies"
+                        path="movies"
                         element={<Movies />}
                     />
 
                     {/* Series */}
                     <Route
-                        path="/series"
+                        path="series"
                         element={<Series />}
                     />
 
                     {/* Reviews */}
                     <Route
-                        path="/reviews"
+                        path="reviews"
                         element={<Reviews />}
                     />
 
                     {/* Users */}
                     <Route
-                        path="/users"
+                        path="users"
                         element={<Users />}
                     />
 
                     {/* Subscriptions */}
                     <Route
-                        path="/subscriptions"
+                        path="subscriptions"
                         element={<Subscriptions />}
                     />
 
                     {/* Settings */}
                     <Route
-                        path="/settings"
+                        path="settings"
                         element={<Settings />}
                     />
 
                     {/* Analytics */}
                     <Route
-                        path="/analytics"
+                        path="analytics"
                         element={<Analytics />}
                     />
 
