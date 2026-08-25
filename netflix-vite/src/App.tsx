@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import AdminLayout from "./layout/AdminLayout";
-
+import Premium from "./pages/Premium/premium.tsx";
 import Dashboard from "./pages/Dashboard/Dashboard.tsx";
 import Movies from "./pages/Movies/Movies";
 import Series from "./pages/Series/Series.tsx";
@@ -23,6 +23,13 @@ const App = () => {
                     />
                 </Route>
 
+                
+                <Route
+                    path="/premium"
+                    element={<Premium />}
+                />
+
+
                 <Route path={"admin"} element={<AdminLayout />}>
 
                     {/* Dashboard */}
@@ -30,6 +37,7 @@ const App = () => {
                         index
                         element={<Dashboard />}
                     />
+
 
                     {/* Movies */}
                     <Route
