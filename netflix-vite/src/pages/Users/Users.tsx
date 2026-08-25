@@ -89,7 +89,6 @@ const Users: React.FC = () => {
     const filteredUsers = users.filter((user) =>
         [
             user.fullName,
-            user.user,
             user.email,
         ].some((value) =>
             value?.toLowerCase().includes(search.toLowerCase())

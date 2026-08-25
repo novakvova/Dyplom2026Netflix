@@ -1,6 +1,30 @@
 import "./HomePage.css";
+import { getPopularMovies } from "../../api/tmdb.tsx";
+import { useEffect, useState } from "react";
+
+type Movie = {
+    id: number;
+    title: string;
+    release_date: string;
+    vote_average: number;
+    original_language: string;
+    poster_path: string | null;
+};
 
 const HomePage = () => {
+    const [movies, setMovies] = useState<Movie[]>([]);
+    const [search, setSearch] = useState("");
+
+    useEffect(() => {
+        getPopularMovies()
+            .then((data) => setMovies(data))
+            .catch((error) => console.error(error));
+    }, []);
+
+    const filteredMovies = movies.filter((movie) =>
+        movie.title.toLowerCase().includes(search.toLowerCase())
+    );
+
     return (
         <>
             <header className="header">
@@ -19,6 +43,8 @@ const HomePage = () => {
                         id="searchInput"
                         type="search"
                         placeholder="Пошук фільму..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
                     />
 
                     <button id="searchButton">🔎</button>
@@ -95,7 +121,11 @@ const HomePage = () => {
                     <div className="section-head">
                         <div>
                             <span className="section-kicker">КАТАЛОГ</span>
-                            <h2 id="catalogTitle">Популярне зараз</h2>
+                            <h2 id="catalogTitle">
+                                {search
+                                    ? `Результати пошуку: ${search}`
+                                    : "Популярне зараз"}
+                            </h2>
                         </div>
                     </div>
 
@@ -138,7 +168,40 @@ const HomePage = () => {
                         </select>
                     </div>
 
-                    <div className="movie-grid" id="movieGrid"></div>
+                    <div className="movie-grid" id="movieGrid">
+                        {filteredMovies.map((movie) => (
+                            <div className="movie-card" key={movie.id}>
+                                <img
+                                    src={
+                                        movie.poster_path
+                                            ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+                                            : "https://via.placeholder.com/500x750?text=No+Image"
+                                    }
+                                    alt={movie.title}
+                                />
+
+                                <div className="movie-info">
+                                    <h3>{movie.title}</h3>
+
+                                    <div className="movie-meta">
+                                        <span>
+                                            {movie.release_date
+                                                ? movie.release_date.slice(0, 4)
+                                                : "Невідомо"}
+                                        </span>
+
+                                        <span>⭐ {movie.vote_average.toFixed(1)}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {filteredMovies.length === 0 && (
+                        <p className="no-results">
+                            Фільмів не знайдено 😔
+                        </p>
+                    )}
                 </section>
 
                 <section className="wide-promo" id="about">
