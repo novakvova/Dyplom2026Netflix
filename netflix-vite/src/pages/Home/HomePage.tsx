@@ -1,4 +1,4 @@
-import "./HomePage.css";
+// import "./HomePage.css";
 import { getPopularMovies } from "../../api/tmdb.tsx";
 import { useEffect, useState } from "react";
 

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {Routes, Route} from "react-router-dom";
 
 import AdminLayout from "./layout/AdminLayout";
 import Premium from "./pages/Premium/premium.tsx";
@@ -11,80 +11,84 @@ import Subscriptions from "./pages/Subscriptions/Subscriptions.tsx";
 import Settings from "./pages/Settings/Settings.tsx";
 import Analytics from "./pages/Analytics/Analytics.tsx";
 import HomePage from "./pages/Home/HomePage.tsx";
+import Login from "./screens/login/Login.tsx";
+import Register from "./screens/register/Register.tsx";
+import Header from "./components/Header.tsx";
 
 const App = () => {
     return (
-        <BrowserRouter>
+        <>
+            <Header/>
             <Routes>
-                <Route path={"/"} >
+                <Route path={"/"}>
                     <Route
                         index
-                        element={<HomePage />}
+                        element={<HomePage/>}
                     />
                 </Route>
-
-                
+                <Route path={"login"} element={<Login/>}/>
+                <Route path={"register"} element={<Register/>}/>
                 <Route
                     path="/premium"
-                    element={<Premium />}
+                    element={<Premium/>}
                 />
 
 
-                <Route path={"admin"} element={<AdminLayout />}>
+                <Route path={"admin"} element={<AdminLayout/>}>
 
                     {/* Dashboard */}
                     <Route
                         index
-                        element={<Dashboard />}
+                        element={<Dashboard/>}
                     />
 
 
                     {/* Movies */}
                     <Route
                         path="movies"
-                        element={<Movies />}
+                        element={<Movies/>}
                     />
 
                     {/* Series */}
                     <Route
                         path="series"
-                        element={<Series />}
+                        element={<Series/>}
                     />
 
                     {/* Reviews */}
                     <Route
                         path="reviews"
-                        element={<Reviews />}
+                        element={<Reviews/>}
                     />
 
                     {/* Users */}
                     <Route
                         path="users"
-                        element={<Users />}
+                        element={<Users/>}
                     />
 
                     {/* Subscriptions */}
                     <Route
                         path="subscriptions"
-                        element={<Subscriptions />}
+                        element={<Subscriptions/>}
                     />
 
                     {/* Settings */}
                     <Route
                         path="settings"
-                        element={<Settings />}
+                        element={<Settings/>}
                     />
 
                     {/* Analytics */}
                     <Route
                         path="analytics"
-                        element={<Analytics />}
+                        element={<Analytics/>}
                     />
 
                 </Route>
 
             </Routes>
-        </BrowserRouter>
+        </>
     );
 };
 
