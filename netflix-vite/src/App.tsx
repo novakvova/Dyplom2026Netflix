@@ -13,80 +13,82 @@ import Analytics from "./pages/Analytics/Analytics.tsx";
 import HomePage from "./pages/Home/HomePage.tsx";
 import Login from "./screens/login/Login.tsx";
 import Register from "./screens/register/Register.tsx";
+import Header from "./components/Header.tsx";
 
 const App = () => {
     return (
-
-        <Routes>
-            <Route path={"/"}>
+        <>
+            <Header/>
+            <Routes>
+                <Route path={"/"}>
+                    <Route
+                        index
+                        element={<HomePage/>}
+                    />
+                </Route>
+                <Route path={"login"} element={<Login/>}/>
+                <Route path={"register"} element={<Register/>}/>
                 <Route
-                    index
-                    element={<HomePage/>}
-                />
-            </Route>
-            <Route path={"login"} element={<Login/>}/>
-            <Route path={"register"} element={<Register/>}/>
-            <Route
-                path="/premium"
-                element={<Premium/>}
-            />
-
-
-            <Route path={"admin"} element={<AdminLayout/>}>
-
-                {/* Dashboard */}
-                <Route
-                    index
-                    element={<Dashboard/>}
+                    path="/premium"
+                    element={<Premium/>}
                 />
 
 
-                {/* Movies */}
-                <Route
-                    path="movies"
-                    element={<Movies/>}
-                />
+                <Route path={"admin"} element={<AdminLayout/>}>
 
-                {/* Series */}
-                <Route
-                    path="series"
-                    element={<Series/>}
-                />
+                    {/* Dashboard */}
+                    <Route
+                        index
+                        element={<Dashboard/>}
+                    />
 
-                {/* Reviews */}
-                <Route
-                    path="reviews"
-                    element={<Reviews/>}
-                />
 
-                {/* Users */}
-                <Route
-                    path="users"
-                    element={<Users/>}
-                />
+                    {/* Movies */}
+                    <Route
+                        path="movies"
+                        element={<Movies/>}
+                    />
 
-                {/* Subscriptions */}
-                <Route
-                    path="subscriptions"
-                    element={<Subscriptions/>}
-                />
+                    {/* Series */}
+                    <Route
+                        path="series"
+                        element={<Series/>}
+                    />
 
-                {/* Settings */}
-                <Route
-                    path="settings"
-                    element={<Settings/>}
-                />
+                    {/* Reviews */}
+                    <Route
+                        path="reviews"
+                        element={<Reviews/>}
+                    />
 
-                {/* Analytics */}
-                <Route
-                    path="analytics"
-                    element={<Analytics/>}
-                />
+                    {/* Users */}
+                    <Route
+                        path="users"
+                        element={<Users/>}
+                    />
 
-            </Route>
+                    {/* Subscriptions */}
+                    <Route
+                        path="subscriptions"
+                        element={<Subscriptions/>}
+                    />
 
-        </Routes>
+                    {/* Settings */}
+                    <Route
+                        path="settings"
+                        element={<Settings/>}
+                    />
 
+                    {/* Analytics */}
+                    <Route
+                        path="analytics"
+                        element={<Analytics/>}
+                    />
+
+                </Route>
+
+            </Routes>
+        </>
     );
 };
 

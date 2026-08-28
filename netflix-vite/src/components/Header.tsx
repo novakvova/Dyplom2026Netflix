@@ -14,7 +14,7 @@ const Header = () => {
     return (
         <header className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
             <Link to={RouterEnum.MAIN} className="text-lg font-bold text-gray-900">
-                WebApiQRCode
+                Netflix
             </Link>
 
             {isAuthenticated ? (
