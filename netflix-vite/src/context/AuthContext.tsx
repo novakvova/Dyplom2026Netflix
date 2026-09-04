@@ -1,59 +1,108 @@
-import { createContext, useContext, useState, type FC, type PropsWithChildren } from "react";
-import {jwtDecode} from "jwt-decode";
-import type {IAuthTokenInfo} from "../screens/login/types/ILogin.ts";
+// src/context/AuthContext.tsx
+import { createContext, useContext, useEffect, useState, useCallback } from 'react'
+import type { ReactNode } from 'react'
+import { useDispatch } from 'react-redux'
+import type { AppDispatch } from '../store/store'
+import { setTokens, clearTokens } from '../store/slices/authSlice'
 
-interface IAuthState {
-    email: string | null;
+
+interface AuthContextType {
+  isAuthenticated: boolean
+  login: (accessToken: string, refreshToken?: string, isActive?: boolean) => void
+  logout: () => void
+  isAuthReady: boolean
+  isActive: boolean | null
+  isBlocked: boolean | null
+  googleTempToken: string | null
+  setGoogleTempToken: (token: string | null) => void
 }
 
-interface IAuthContextValue extends IAuthState {
-    isAuthenticated: boolean;
-    login: (token: string) => void;
-    logout: () => void;
-}
+const AuthContext = createContext<AuthContextType | null>(null)
+export const useAuth = () => useContext(AuthContext)!
 
-const AUTH_STORAGE_KEY = "auth";
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const dispatch = useDispatch<AppDispatch>()
+  const [isBlocked, setIsBlocked] = useState<boolean | null>(null)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isAuthReady, setIsAuthReady] = useState(false)
+  const [isActive, setIsActive] = useState<boolean | null>(null)
 
-const getInitialState = (): IAuthState => {
-    const token = localStorage.getItem(AUTH_STORAGE_KEY);
-    if (!token) return { email: null };
-    try {
-        const decode = jwtDecode<IAuthTokenInfo>(token);
-        return {email: decode.email} as IAuthState;
-    } catch {
-        return { email: null };
+  const [googleTempTokenState, setGoogleTempTokenState] = useState<string | null>(null)
+
+  const setGoogleTempToken = useCallback((token: string | null) => {
+    if (token) {
+      localStorage.setItem('googleTempToken', token)
+    } else {
+      localStorage.removeItem('googleTempToken')
     }
-};
+    setGoogleTempTokenState(token)
+  }, [])
 
-const AuthContext = createContext<IAuthContextValue | null>(null);
+  useEffect(() => {
+    const accessToken = localStorage.getItem('accessToken')
+    const refreshToken = localStorage.getItem('refreshToken')
+    const active = localStorage.getItem('isActive')
+    const storedIsBlocked = localStorage.getItem('isBlocked')
+    const storedGoogleTempToken = localStorage.getItem('googleTempToken')
+    if (storedGoogleTempToken) {
+      setGoogleTempTokenState(storedGoogleTempToken)
+    }
 
-export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
-    const [auth, setAuth] = useState<IAuthState>(getInitialState);
+    if (accessToken || refreshToken) {
+      dispatch(setTokens({
+        accessToken: accessToken ?? null,
+        refreshToken: refreshToken ?? null,
+        isActive: active ? active === 'true' : null,
+        isBlocked: storedIsBlocked ? storedIsBlocked ==='true' : null
+      }))
+      setIsAuthenticated(!!accessToken)
+      setIsActive(active ? active === 'true' : null)
+      setIsBlocked(storedIsBlocked ? storedIsBlocked === 'true' : null)
+    } else {
+      dispatch(clearTokens())
+      setIsAuthenticated(false)
+      setIsActive(null)
+    }
 
-    const login = (token: string) => {
-        const decode = jwtDecode<IAuthTokenInfo>(token);
-        //console.log("Decode token", decode);
-        const newState = { token, email: decode.email };
-        localStorage.setItem(AUTH_STORAGE_KEY, token);
-        setAuth(newState);
-    };
+    setIsAuthReady(true)
+  }, [dispatch])
 
-    const logout = () => {
-        localStorage.removeItem(AUTH_STORAGE_KEY);
-        setAuth({ email: null });
-    };
+  const login = (accessToken: string, refreshToken?: string, isActive?: boolean, isBlocked?: boolean) => {
+    localStorage.setItem('accessToken', accessToken)
+      if (refreshToken) localStorage.setItem('refreshToken', refreshToken)
+      if (typeof isActive !== 'undefined') {
+        localStorage.setItem('isActive', String(isActive))
+        setIsActive(isActive)
+      }
+      if (typeof isBlocked !== 'undefined') {
+        localStorage.setItem('storedIsBlocked', String(isBlocked))
+        setIsBlocked(isBlocked)
+      } else {
+        localStorage.removeItem('isBlocked')
+        setIsBlocked(null)
+      }
+      dispatch(setTokens({ accessToken, refreshToken: refreshToken ?? null, isActive: isActive ?? null, isBlocked: isBlocked ?? null}))
+      setIsAuthenticated(true)
+  }
 
-    return (
-        <AuthContext.Provider value={{ ...auth, isAuthenticated: !!auth.email, login, logout }}>
-            {children}
-        </AuthContext.Provider>
-    );
-};
+  const logout = () => {
+    localStorage.clear
+  }
 
-
-// eslint-disable-next-line react-refresh/only-export-components
-export const useAuth = () => {
-    const ctx = useContext(AuthContext);
-    if (!ctx) throw new Error("useAuth must be used within AuthProvider");
-    return ctx;
-};
+  return (
+    <AuthContext.Provider
+      value={{
+        isAuthenticated,
+        login,
+        logout,
+        isAuthReady,
+        isActive,
+        isBlocked,
+        googleTempToken: googleTempTokenState,
+        setGoogleTempToken, 
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  )
+}
