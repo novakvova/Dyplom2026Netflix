@@ -42,14 +42,15 @@ const ChoosePlanPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // якщо користувач реєструється з 0 → отримуємо дані з location.state
   const { fullName, email, password } = location.state || {};
   const { googleTempToken, isAuthenticated } = useAuth();
 
   const [selectedPlan, setSelectedPlan] = useState("");
   const [error, setError] = useState("");
-  const [updateSubscription, { isLoading }] = useUpdateSubscriptionMutation();
-  const { data: user, isLoading: isUserLoading } = useGetProfileQuery(undefined, {
+  const [updateSubscription, { isLoading }] =
+    useUpdateSubscriptionMutation();
+
+  const { data: user } = useGetProfileQuery(undefined, {
     skip: !isAuthenticated,
   });
 
@@ -71,6 +72,7 @@ const ChoosePlanPage = () => {
       setError(t("choosePlan.errors.noPlanSelected"));
       return;
     }
+
     setError("");
 
     if (isAuthenticated) {
@@ -85,12 +87,16 @@ const ChoosePlanPage = () => {
               googleTempToken,
             },
           });
+
           window.location.reload();
           return;
         }
+
         await updateSubscription({
           id: user?.subscriptionId,
-          dto: { type: formatPlanType(selectedPlan) },
+          dto: {
+            type: formatPlanType(selectedPlan),
+          },
         }).unwrap();
 
         navigate("/profile");
@@ -100,7 +106,6 @@ const ChoosePlanPage = () => {
         setError(t("choosePlan.errors.updateFailed"));
       }
     } else {
-      // реєстрація нового користувача → далі йдемо на оплату
       navigate("/payment", {
         state: {
           selectedPlan,
@@ -110,103 +115,177 @@ const ChoosePlanPage = () => {
           googleTempToken,
         },
       });
-      window.location.reload();
 
+      window.location.reload();
     }
   };
 
   return (
-    <div
-      className="min-h-screen bg-cover bg-center flex flex-col"
-      style={{
-        backgroundImage:
-          "linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/public/login-bg.png')",
-      }}
-    >
-      <div className="flex justify-between items-center py-6 px-16">
-        <img src={logo} alt="logo" className="w-32" />
+    <div className="min-h-screen bg-[#090612] text-white relative overflow-hidden">
+      {/* Background glow */}
+      <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-purple-700/15 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full bg-violet-600/15 blur-3xl pointer-events-none" />
+
+      {/* Header */}
+      <div className="relative z-10 flex justify-between items-center py-6 px-6 md:px-10 lg:px-16">
+        <img
+          src={logo}
+          alt="logo"
+          className="w-32 md:w-36 object-contain"
+        />
+
         <button
           onClick={() => navigate(-1)}
-          className="text-white font-bold hover:underline"
+          className="text-gray-400 hover:text-white transition font-medium"
         >
           {t("choosePlan.backButton")}
         </button>
       </div>
 
-      <div className="max-w-4xl mx-auto w-full">
-        <h2 className="px-4 py-2 inline-block w-full text-white rounded-lg font-semibold text-2xl mb-2 bg-gradient-to-r from-[#C4FF00]/60 to-[#C4FF00]/0">
-          {t("choosePlan.title")}
-        </h2>
+      {/* Content */}
+      <div className="relative z-10 max-w-5xl mx-auto w-full px-4 pb-10">
+        <div className="mb-7">
+          <h2 className="text-2xl md:text-3xl font-bold text-white">
+            {t("choosePlan.title")}
+          </h2>
 
-        {/* Вибір планів */}
-        <div className="grid py-3 grid-cols-1 md:grid-cols-3 gap-4">
-          {plans.map((plan) => (
-            <div
-              key={plan.nameKey}
-              onClick={() => setSelectedPlan(plan.nameKey)}
-              className={`cursor-pointer bg-[#191716]/80 text-white p-3 rounded-lg transition border-2 ${
-                selectedPlan === plan.nameKey
-                  ? "border-[#C4FF00]/50"
-                  : "border-transparent"
-              }`}
-            >
-              <div className="bg-gradient-to-r bg-[#C4FF00]/20 to-lime-600/50 text-white px-6 pt-2 pb-1 rounded-md w-full mb-2">
-                <h3 className="font-semibold text-lg">
-                  {t(`choosePlan.plans.${plan.nameKey}.name`)}
-                </h3>
-                <p className="text-lm text-gray-100 opacity-90 mb-2">
-                  {plan.resolution}
-                </p>
-              </div>
+          <div className="mt-3 h-px w-full bg-gradient-to-r from-purple-500/60 via-violet-500/20 to-transparent" />
+        </div>
 
-              <p className="mb-2 px-3">
-                <span className="font-semibold">{t("choosePlan.labels.price")}</span>
-                <br />
-                {plan.price}
+       {/* Plans */}
+<div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
+  {plans.map((plan) => {
+    const isSelected = selectedPlan === plan.nameKey;
+
+    return (
+      <div
+        key={plan.nameKey}
+        onClick={() => setSelectedPlan(plan.nameKey)}
+        className={`relative cursor-pointer rounded-xl border p-4 transition duration-200 ${
+          isSelected
+            ? "border-purple-500 bg-[#1A1228] shadow-lg shadow-purple-900/20"
+            : "border-white/10 bg-[#120D1D] hover:border-purple-500/40 hover:bg-[#171020]"
+        }`}
+      >
+        {/* Selected indicator */}
+        {isSelected && (
+          <div className="absolute top-4 right-4 w-2.5 h-2.5 rounded-full bg-purple-500 shadow-md shadow-purple-500/50" />
+        )}
+
+        {/* Plan header */}
+        <div
+          className={`rounded-lg p-3 mb-4 border ${
+            isSelected
+              ? "bg-purple-600/15 border-purple-500/30"
+              : "bg-white/5 border-white/5"
+          }`}
+        >
+          <h3 className="font-bold text-lg text-white">
+            {t(`choosePlan.plans.${plan.nameKey}.name`)}
+          </h3>
+
+          <p className="text-gray-400 text-xs mt-1">
+            {plan.resolution}
+          </p>
+        </div>
+
+        {/* Price */}
+        <div className="mb-4">
+          <p className="text-gray-500 text-xs">
+            {t("choosePlan.labels.price")}
+          </p>
+
+          <p className="text-xl font-bold text-white mt-1">
+            {plan.price}
+          </p>
+        </div>
+
+        {/* Details */}
+        <div className="space-y-3 text-xs">
+          <div>
+            <p className="text-gray-500">
+              {t("choosePlan.labels.quality")}
+            </p>
+
+            <p className="text-gray-200 mt-1">
+              {t(`choosePlan.plans.${plan.nameKey}.quality`)}
+            </p>
+          </div>
+
+          <div>
+            <p className="text-gray-500">
+              {t("choosePlan.labels.resolution")}
+            </p>
+
+            <p className="text-gray-200 mt-1">
+              {plan.resolution}
+            </p>
+          </div>
+
+          {plan.extraKey && (
+            <div>
+              <p className="text-gray-500">
+                {t("choosePlan.labels.extra")}
               </p>
-              <p className="mb-2 px-3">
-                <span className="font-semibold">{t("choosePlan.labels.quality")}</span>
-                <br />
-                {t(`choosePlan.plans.${plan.nameKey}.quality`)}
+
+              <p className="text-gray-200 mt-1">
+                {t(`choosePlan.labels.${plan.extraKey}`)}
               </p>
-              <p className="mb-2 px-3">
-                <span className="font-semibold">{t("choosePlan.labels.resolution")}</span>
-                <br />
-                {plan.resolution}
+            </div>
+          )}
+
+          <div>
+            <p className="text-gray-500">
+              {t("choosePlan.labels.devices")}
+            </p>
+
+            <p className="text-gray-200 mt-1 leading-relaxed">
+              {plan.devices}
+            </p>
+          </div>
+
+          <div className="flex justify-between border-t border-white/5 pt-3">
+            <div>
+              <p className="text-gray-500">
+                {t("choosePlan.labels.streams")}
               </p>
-              {plan.extraKey && (
-                <p className="mb-2 px-3">
-                  <span className="font-semibold">{t("choosePlan.labels.extra")}</span>
-                  <br />
-                  {t(`choosePlan.labels.${plan.extraKey}`)}
-                </p>
-              )}
-              <p className="mb-2 px-3">
-                <span className="font-semibold">{t("choosePlan.labels.devices")}</span>
-                <br />
-                {plan.devices}
-              </p>
-              <p className="mb-2 px-3">
-                <span className="font-semibold">{t("choosePlan.labels.streams")}</span>
-                <br />
+
+              <p className="text-gray-200 mt-1 font-medium">
                 {plan.streams}
               </p>
-              <p className="px-3">
-                <span className="font-semibold">{t("choosePlan.labels.downloads")}</span>
-                <br />
+            </div>
+
+            <div className="text-right">
+              <p className="text-gray-500">
+                {t("choosePlan.labels.downloads")}
+              </p>
+
+              <p className="text-gray-200 mt-1 font-medium">
                 {plan.downloads}
               </p>
             </div>
-          ))}
+          </div>
         </div>
 
-        {error && <p className="text-red-500 mt-4">{error}</p>}
 
-        <div className="flex justify-end mt-2">
+      </div>
+    );
+  })}
+</div>
+
+        {/* Error */}
+        {error && (
+          <p className="text-red-400 text-sm mt-4 px-1">
+            {error}
+          </p>
+        )}
+
+        {/* Continue */}
+        <div className="mt-7">
           <button
             onClick={handleSubmit}
             disabled={isLoading}
-            className="bg-gradient-to-r w-full from-green-600/0 to-[#C4FF00]/60 text-2xl text-white font-semibold px-8 py-2 rounded-lg text-right disabled:opacity-60"
+            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-purple-600 to-violet-500 text-white font-semibold text-lg transition duration-200 hover:from-purple-500 hover:to-violet-400 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-purple-900/20"
           >
             {isAuthenticated
               ? t("choosePlan.save")

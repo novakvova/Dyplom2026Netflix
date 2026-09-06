@@ -1,27 +1,70 @@
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import MediaTvGrid from "../../components/MediaTvGrid";
-import { getTvGenres, getPopularTV } from "../../services/movieApi";
+import {
+  getTvGenres,
+  getPopularTV,
+} from "../../services/movieApi";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 export default function MoviesPage() {
-    const [genres, setGenres] = useState<{ id: number; name: string }[]>([]);
-const { t, i18n } = useTranslation();
-  const currentLanguage = i18n.language; 
+  const [genres, setGenres] = useState<
+    { id: number; name: string }[]
+  >([]);
 
+  const { i18n } = useTranslation();
+  const currentLanguage = i18n.language;
 
   useEffect(() => {
-    getTvGenres(1, currentLanguage).then((data) => setGenres(data.genres));
-    //getSeriesEpisode().then((data) => setSpisode(data.))
-  }, []);
+    getTvGenres(1, currentLanguage).then(
+      (data) => setGenres(data.genres)
+    );
+  }, [currentLanguage]);
+
   return (
-    <div className="bg-black text-white">
-      <Header />
-      <div className="mt-20">
-        <MediaTvGrid titleKey="Популярні серіали" fetchData={(page, filters) => getPopularTV(page ?? 1, currentLanguage,filters)}  genres={genres}/>;
+    <div className="min-h-screen bg-[#090612] text-white relative overflow-hidden">
+      {/* Background glow */}
+      <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-purple-700/15 blur-3xl pointer-events-none" />
+
+      <div className="absolute top-[40%] -right-40 w-[500px] h-[500px] rounded-full bg-violet-600/10 blur-3xl pointer-events-none" />
+
+      <div className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full bg-purple-700/10 blur-3xl pointer-events-none" />
+
+      <div className="relative z-20">
+        <Header />
       </div>
-      <Footer />
+
+      <main className="relative z-10 pt-24 pb-12">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-10">
+          <div className="mb-7">
+            <h1 className="text-2xl md:text-3xl font-bold">
+              Популярні серіали
+            </h1>
+
+            <div className="mt-3 h-px w-full bg-gradient-to-r from-purple-500/60 via-violet-500/20 to-transparent" />
+          </div>
+
+          <div className="rounded-xl border border-white/10 bg-[#120D1D] p-4 md:p-6">
+            <MediaTvGrid
+              titleKey="Популярні серіали"
+              fetchData={(page, filters) =>
+                getPopularTV(
+                  page ?? 1,
+                  currentLanguage,
+                  filters
+                )
+              }
+              genres={genres}
+            />
+          </div>
+        </div>
+      </main>
+
+      <div className="relative z-10">
+        <Footer />
+      </div>
     </div>
   );
 }
+
