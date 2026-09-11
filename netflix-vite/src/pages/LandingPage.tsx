@@ -1,132 +1,189 @@
 import React, { useRef, useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useTranslation, Trans } from "react-i18next";
+
 import logo from "/logo-green.png";
 import Footer from "../components/Footer/Footer";
+
 import { FaDownload, FaChild } from "react-icons/fa";
-import { type Movie, type TMDBResponse } from "../types/movie";
-import { getPopularMovies } from "../services/movieApi";
 import { GiFilmProjector } from "react-icons/gi";
 import { MdOutlineScreenSearchDesktop } from "react-icons/md";
+
+import { type Movie, type TMDBResponse } from "../types/movie";
+import { getPopularMovies } from "../services/movieApi";
+
 import LanguageSwitcher from "../components/LanguageSwitcher";
 import { useAuth } from "../context/AuthContext";
 import { useGetProfileQuery } from "../services/userApi";
 
-
 const IMG_BASE = "https://image.tmdb.org/t/p/w500";
-const AVATAR_PLACEHOLDER = "https://via.placeholder.com/40/C4FF00/000000?text=👤";
+const BACKDROP_BASE = "https://image.tmdb.org/t/p/w780";
 
 const LandingPage: React.FC = () => {
   const { t, i18n } = useTranslation();
-  const currentLanguage = i18n.language; 
-  const [email, setEmail] = useState("");
+  const currentLanguage = i18n.language;
+
   const navigate = useNavigate();
+
+  const [email, setEmail] = useState("");
   const [movies, setMovies] = useState<Movie[]>([]);
-
-
-  const { isAuthenticated, isAuthReady } = useAuth();
-  
-  const { data: userProfile, isLoading: isProfileLoading } = useGetProfileQuery(undefined, {
-    skip: !isAuthenticated,
-  });
+  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  const { isAuthenticated, isAuthReady } = useAuth();
+
+  const {
+    data: userProfile,
+    isLoading: isProfileLoading,
+  } = useGetProfileQuery(undefined, {
+    skip: !isAuthenticated,
+  });
+
   const scroll = (direction: "left" | "right") => {
-    if (scrollRef.current) {
-      const scrollAmount = scrollRef.current.offsetWidth / 4;
-      scrollRef.current.scrollBy({
-        left: direction === "left" ? -scrollAmount : scrollAmount,
-        behavior: "smooth",
-      });
-    }
+    if (!scrollRef.current) return;
+
+    const scrollAmount = scrollRef.current.offsetWidth / 2;
+
+    scrollRef.current.scrollBy({
+      left: direction === "left" ? -scrollAmount : scrollAmount,
+      behavior: "smooth",
+    });
   };
-  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const data: TMDBResponse<Movie> = await getPopularMovies(1, currentLanguage);
+        const data: TMDBResponse<Movie> = await getPopularMovies(
+          1,
+          currentLanguage
+        );
+
         setMovies(data.results.slice(0, 10));
-      } catch (err) {
-        console.error("Помилка завантаження:", err);
+      } catch (error) {
+        console.error("Помилка завантаження:", error);
       }
     };
 
     fetchMovies();
-  }, []);
+  }, [currentLanguage]);
 
   return (
-    <div className="bg-[#191716] text-white min-h-screen">
-      <header className="absolute top-0 left-0 w-full z-20">
-        <div className="max-w-6xl mx-auto flex justify-between items-center px-6 py-4">
+    <div className="min-h-screen overflow-hidden bg-[#090612] text-white">
+      {/* HEADER */}
+      <header className="absolute left-0 top-0 z-30 w-full">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 sm:px-8 lg:px-10">
           <Link to="/home">
-            <img src={logo} alt="Logo" className="w-28 md:w-40" />
+            <img
+              src={logo}
+              alt="Logo"
+              className="w-28 md:w-36"
+            />
           </Link>
-          <div className="flex items-center gap-4">
+
+          <div className="flex items-center gap-3 md:gap-5">
             <LanguageSwitcher />
+
             {isAuthReady ? (
               isAuthenticated ? (
                 <Link to="/profile">
-                  <img
-                    src={userProfile?.profilePictureUrl ? `http://localhost:5170/${userProfile.profilePictureUrl}` : "/default-avatar.png"}
-                    alt="User Avatar"
-                    className={`w-10 h-10 rounded-sm border-2 border-[#C4FF00] cursor-pointer transition ${isProfileLoading ? 'animate-pulse' : ''}`}
-                  />
+                  <div className="group relative">
+                    <img
+                      src={
+                        userProfile?.profilePictureUrl
+                          ? `http://localhost:5170/${userProfile.profilePictureUrl}`
+                          : "/default-avatar.png"
+                      }
+                      alt="User Avatar"
+                      className={`h-10 w-10 cursor-pointer rounded-full border-2 border-purple-500/60 object-cover transition-all duration-300 group-hover:border-purple-400 group-hover:shadow-[0_0_20px_rgba(139,92,246,0.4)] ${
+                        isProfileLoading ? "animate-pulse" : ""
+                      }`}
+                    />
+                  </div>
                 </Link>
               ) : (
                 <Link to="/login">
-                  <button className="bg-[#C4FF00]/70 px-4 py-2 rounded-sm text-white font-semibold hover:bg-[#C4FF00]/60">
+                  <button
+                    type="button"
+                    className="rounded-lg border border-purple-400/20 bg-purple-600/80 px-5 py-2.5 font-semibold text-white transition-all duration-200 hover:bg-purple-500 hover:shadow-[0_0_25px_rgba(139,92,246,0.35)]"
+                  >
                     {t("landingPage.login")}
                   </button>
                 </Link>
               )
             ) : (
-              <div className="w-24 h-10 bg-gray-700 rounded-sm animate-pulse"></div>
+              <div className="h-10 w-24 animate-pulse rounded-lg bg-purple-900/30" />
             )}
           </div>
         </div>
       </header>
 
-      {/* ====================================================================================== */}
-
-      <section className="relative h-[90vh] flex items-center justify-center">
+      {/* HERO */}
+      <section className="relative flex min-h-[90vh] items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
           <img
             src="/land-bg.jpg"
             alt="Background"
-            className="w-full h-full object-cover"
+            className="h-full w-full object-cover"
           />
-          <div className="absolute inset-0 bg-black/70" />
+
+          <div className="absolute inset-0 bg-[#090612]/75" />
+
+          <div className="absolute inset-0 bg-gradient-to-b from-[#090612]/40 via-[#090612]/60 to-[#090612]" />
+
+          <div className="absolute inset-0 bg-gradient-to-r from-[#090612]/80 via-transparent to-[#090612]/80" />
         </div>
 
-        <div className="relative z-10 text-center px-6 max-w-3xl">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">
+        <div className="absolute -top-40 left-1/2 h-[500px] w-[700px] -translate-x-1/2 rounded-full bg-purple-700/20 blur-[160px]" />
+
+        <div className="relative z-10 max-w-4xl px-5 pt-20 text-center">
+          <div className="mb-6 inline-flex items-center rounded-full border border-purple-500/20 bg-purple-500/10 px-4 py-2 backdrop-blur-md">
+            <span className="text-sm text-purple-200">
+              {t("landingPage.popularNow")}
+            </span>
+          </div>
+
+          <h1 className="mb-6 text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
             <Trans i18nKey="landingPage.heroTitle">
-              Movies, series and lots of other content <br /> without limits
+              Movies, series and lots of other content
+              <br />
+              without limits
             </Trans>
           </h1>
-          
-              <h2 className="text-lg md:text-2xl mb-4">
-                <Trans i18nKey="landingPage.heroSubtitle">
-                  From <span className="text-[#C4FF00]">4,99 EUR</span>. You can cancel subscription anytime
-                </Trans>
-              </h2>
-              
-              {!isAuthenticated && (
+
+          <h2 className="mb-5 text-lg text-purple-100/80 sm:text-xl md:text-2xl">
+            <Trans i18nKey="landingPage.heroSubtitle">
+              From{" "}
+              <span className="font-bold text-purple-400">
+                4,99 EUR
+              </span>
+              . You can cancel subscription anytime
+            </Trans>
+          </h2>
+
+          {!isAuthenticated && (
             <>
-            <p className="mb-6">{t("landingPage.heroText")}</p>
-              <div className="flex rounded-sm flex-col sm:flex-row justify-center gap-4">
+              <p className="mx-auto mb-7 max-w-2xl text-purple-200/60">
+                {t("landingPage.heroText")}
+              </p>
+
+              <div className="mx-auto flex max-w-2xl flex-col justify-center gap-3 sm:flex-row">
                 <input
                   type="email"
                   placeholder={t("landingPage.emailPlaceholder")}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="px-4 py-3 w-full sm:w-112 bg-black/70 border border-gray-500"
+                  className="h-14 flex-1 rounded-lg border border-purple-500/20 bg-[#120D1D]/90 px-5 text-white outline-none transition placeholder:text-purple-200/30 focus:border-purple-500/60 focus:ring-2 focus:ring-purple-500/10"
                 />
+
                 <button
-                  onClick={() => navigate("/register", { state: { email } })}
-                  className="bg-[#C4FF00]/70 px-6 py-3 rounded-sm font-bold text-lg hover:bg-[#C4FF00]/60 transition"
+                  type="button"
+                  onClick={() =>
+                    navigate("/register", {
+                      state: { email },
+                    })
+                  }
+                  className="h-14 rounded-lg bg-gradient-to-r from-purple-600 to-violet-500 px-7 font-bold text-white transition-all duration-200 hover:from-purple-500 hover:to-violet-400 hover:shadow-[0_0_35px_rgba(139,92,246,0.35)] active:scale-[0.98]"
                 >
                   {t("landingPage.startButton")}
                 </button>
@@ -136,122 +193,170 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* ====================================================================================== */}
-
-      <div className="relative">
-        <div
-          className="absolute -top-11 left-0 w-full h-10
-                      bg-gradient-to-t from-[#191716]/20 via-[#191716]  to-[#C4FF00]/100 
-                      rounded-t-[50%]
-                      shadow-[0_-20px_30px_rgba(0,0,0,0.6)]"
-        />
+      {/* TRANSITION */}
+      <div className="relative h-10">
+        <div className="absolute -top-10 left-0 h-20 w-full rounded-t-[50%] bg-gradient-to-b from-transparent via-purple-900/10 to-[#090612]" />
       </div>
 
-      {/* ====================================================================================== */}
+      {/* POPULAR MOVIES */}
+      <section className="relative bg-gradient-to-b from-[#090612] via-[#0D0914] to-[#090612] px-5 py-14 sm:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-8 flex items-center justify-between">
+            <div>
+              <p className="mb-2 text-sm uppercase tracking-[0.2em] text-purple-400">
+                {t("landingPage.popularNow")}
+              </p>
 
-      <div className="relative">
-        <div className="absolute -top-10 left-0 w-full h-12 bg-gradient-to-b from-black via-[#0f0d0d] to-[#0f0d0d] rounded-t-[50%] shadow-[0_-20px_20px_rgba(0,255,0,0.4)]" />
-      </div>
-      <section className="bg-gradient-to-b from-[#0f0d0d] via-black/50 to-[#191716] py-12 px-6">
-        <div className="max-w-6xl mx-auto relative">
-          <div className="inline-flex justify-between w-full">
-          <h2 className="text-4xl font-bold mb-6 text-white">{t("landingPage.popularNow")}</h2>
-          <div className="flex">
-            <button
-            onClick={() => scroll('left')}
-            className="w-8 h-12 text-white flex items-center justify-center rounded-md hover:bg-opacity-75 transition-colors duration-200"
-          >
-            <span className="text-5xl font-regular">‹</span>
-          </button>
-          <button
-            onClick={() => scroll('right')}
-            className="w-8 h-12 text-white flex items-center justify-center rounded-md hover:bg-opacity-75 transition-colors duration-200"
-          >
-            <span className="text-5xl font-regular">›</span>
-          </button>
+              <h2 className="text-3xl font-bold md:text-4xl">
+                {t("landingPage.popularNow")}
+              </h2>
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => scroll("left")}
+                aria-label="Scroll left"
+                className="flex h-11 w-11 items-center justify-center rounded-lg border border-purple-500/20 bg-purple-500/5 text-3xl text-purple-200 transition hover:border-purple-500/40 hover:bg-purple-500/15"
+              >
+                ‹
+              </button>
+
+              <button
+                type="button"
+                onClick={() => scroll("right")}
+                aria-label="Scroll right"
+                className="flex h-11 w-11 items-center justify-center rounded-lg border border-purple-500/20 bg-purple-500/5 text-3xl text-purple-200 transition hover:border-purple-500/40 hover:bg-purple-500/15"
+              >
+                ›
+              </button>
+            </div>
           </div>
-        </div>
+
           <div
             ref={scrollRef}
-            className="flex gap-4 overflow-x-auto overflow-y-visible scrollbar-hide scroll-smooth py-2 px-4"
+            className="flex gap-5 overflow-x-auto overflow-y-visible px-5 py-6 scrollbar-hide scroll-smooth"
           >
             {movies.map((movie, index) => (
               <div
                 key={movie.id}
-                className="relative min-w-[20%] flex-shrink-0 cursor-pointer group
-                         rounded-lg transform transition-transform duration-500 hover:scale-105"
+                role="button"
+                tabIndex={0}
                 onClick={() => setSelectedMovie(movie)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    setSelectedMovie(movie);
+                  }
+                }}
+                className="group relative min-w-[180px] flex-shrink-0 cursor-pointer transition-all duration-500 hover:scale-[1.04] sm:min-w-[210px] md:min-w-[230px]"
               >
-                <div className=" absolute -left-4 -top-16 z-20 text-[180px] font-extrabold
-                                 drop-shadow-[1px_1px_5px_rgba(196,255,0,0.9)]
-                                 [-webkit-text-stroke:2px_lime]
-                                text-transparent">
+                <div className="absolute -left-5 -top-10 z-20 text-[110px] font-black leading-none text-transparent drop-shadow-[0_0_15px_rgba(139,92,246,0.2)] [-webkit-text-stroke:2px_rgba(139,92,246,0.65)] sm:text-[140px]">
                   {index + 1}
                 </div>
 
-                <div className="rounded-lg overflow-hidden">
+                <div className="relative overflow-hidden rounded-xl border border-purple-500/10 bg-[#120D1D] shadow-[0_15px_40px_rgba(0,0,0,0.4)] transition-all duration-500 group-hover:border-purple-500/30 group-hover:shadow-[0_20px_50px_rgba(88,28,135,0.25)]">
                   <img
                     src={`${IMG_BASE}${movie.poster_path}`}
                     alt={movie.title || movie.original_title}
-                    className="w-full h-80 object-cover"
+                    className="h-[280px] w-full object-cover transition-transform duration-700 group-hover:scale-105 sm:h-[320px] md:h-[350px]"
                   />
+
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#090612] via-transparent to-transparent opacity-60" />
+
+                  <div className="absolute bottom-0 left-0 right-0 translate-y-2 p-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                    <div className="truncate text-sm font-semibold">
+                      {movie.title || movie.original_title}
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
 
+          {/* MOVIE MODAL */}
           {selectedMovie && (
-            <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-              <div className="bg-[#191716] rounded-lg max-w-2xl mx-auto w-full max-h-[90vh] overflow-y-auto relative">
-                <div className="relative w-full h-96">
-                  <div
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: `url(${IMG_BASE}${selectedMovie.backdrop_path})` }}
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-r from-[#191716] via-transparent to-[#191716]" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#191716] to-transparent" />
-                  </div>
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4 py-8 backdrop-blur-sm"
+              onClick={() => setSelectedMovie(null)}
+            >
+              <div
+                className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-purple-500/20 bg-[#120D1D] shadow-[0_30px_100px_rgba(0,0,0,0.7)]"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="relative h-64 w-full overflow-hidden rounded-t-2xl sm:h-80">
+                  {selectedMovie.backdrop_path ? (
+                    <div
+                      className="absolute inset-0 bg-cover bg-center"
+                      style={{
+                        backgroundImage: `url(${BACKDROP_BASE}${selectedMovie.backdrop_path})`,
+                      }}
+                    />
+                  ) : (
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-950 to-[#120D1D]" />
+                  )}
+
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#120D1D] via-[#120D1D]/20 to-transparent" />
                 </div>
 
                 <button
-                  className="absolute top-3 right-3 text-white text-3xl font-bold p-1 rounded-full transition z-50"
+                  type="button"
+                  aria-label="Close"
+                  className="absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-black/50 text-2xl text-white transition hover:bg-purple-600"
                   onClick={() => setSelectedMovie(null)}
                 >
-                  &times;
+                  ×
                 </button>
 
-                <div className="p-8 relative z-10">
-                  <h3 className="text-2xl font-bold text-white mb-1">
+                <div className="relative z-10 -mt-8 px-6 pb-8 sm:px-8">
+                  <h3 className="mb-3 text-2xl font-bold text-white sm:text-3xl">
                     {selectedMovie.title || selectedMovie.original_title}
                   </h3>
 
-                  <div className="flex items-center gap-4 mb-4 text-gray-400 text-sm">
+                  <div className="mb-5 flex flex-wrap items-center gap-3 text-sm text-purple-200/60">
                     {selectedMovie.release_date && (
-                      <span>{new Date(selectedMovie.release_date).getFullYear()}</span>
+                      <span>
+                        {new Date(
+                          selectedMovie.release_date
+                        ).getFullYear()}
+                      </span>
                     )}
-                    {selectedMovie.genres && selectedMovie.genres.length > 0 && (
-                      <div className="flex flex-wrap gap-1">
-                        {selectedMovie.genres.map(genre => (
-                          <span key={genre.id} className="border border-gray-500 rounded-full px-2 py-0.5 text-xs">
-                            {genre.name}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                    {selectedMovie.vote_average && (
-                      <span className="flex items-center gap-1">
-                        <svg fill="currentColor" viewBox="0 24 24" className="w-4 h-4 text-yellow-500">
+
+                    {selectedMovie.genres &&
+                      selectedMovie.genres.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                          {selectedMovie.genres.map((genre) => (
+                            <span
+                              key={genre.id}
+                              className="rounded-full border border-purple-500/20 bg-purple-500/5 px-3 py-1 text-xs"
+                            >
+                              {genre.name}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                    {selectedMovie.vote_average !== undefined && (
+                      <span className="flex items-center gap-1 text-purple-300">
+                        <svg
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                          className="h-4 w-4"
+                        >
                           <path d="M12 .587l3.668 7.425L24 9.425l-6 5.856L19.332 24 12 20.255 4.668 24 6 15.281 0 9.425l8.332-1.413L12 .587z" />
                         </svg>
+
                         {selectedMovie.vote_average.toFixed(1)}
                       </span>
                     )}
                   </div>
 
-                  <p className="text-gray-300 mb-6">
-                    {selectedMovie.overview || t("landingPage.noDescription")}
+                  <p className="mb-7 leading-7 text-purple-100/70">
+                    {selectedMovie.overview ||
+                      t("landingPage.noDescription")}
                   </p>
+
                   <button
+                    type="button"
                     onClick={() => {
                       if (isAuthenticated) {
                         navigate(`/movie/${selectedMovie.id}`);
@@ -259,14 +364,18 @@ const LandingPage: React.FC = () => {
                         navigate("/login");
                       }
                     }}
-                    className="border text-white no-underline px-6 py-3 rounded-lg hover:bg-[#555555] transition flex items-center justify-center gap-2 font-bold"
+                    className="flex h-12 min-w-[180px] items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-purple-600 to-violet-500 px-6 font-bold text-white transition-all duration-200 hover:from-purple-500 hover:to-violet-400 hover:shadow-[0_0_35px_rgba(139,92,246,0.35)]"
                   >
                     {t("landingPage.startButton")}
-                    <svg fill="currentColor" viewBox="0 24 24" className="w-5 h-5">
+
+                    <svg
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                      className="h-5 w-5"
+                    >
                       <path d="M5 3l14 9-14 9z" />
                     </svg>
                   </button>
-
                 </div>
               </div>
             </div>
@@ -274,97 +383,73 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* ====================================================================================== */}
+      {/* REASONS */}
+      <section className="relative bg-gradient-to-b from-[#090612] via-[#0D0914] to-[#090612] px-5 py-20 sm:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-10">
+            <h2 className="text-3xl font-bold text-white md:text-4xl">
+              {t("landingPage.moreReasons")}
+            </h2>
+          </div>
 
-      <section className="bg-gradient-to-t from-[#191716] via-black/50 to-[#191716] py-16 px-6">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold text-white mb-8 tracking-wide">
-            {t("landingPage.moreReasons")}
-          </h2>
-          <div className="grid md:grid-cols-4 gap-8 text-center">
-            {[
-              {
-                title: t("landingPage.reasons.tv.title"),
-                subtitle: t("landingPage.reasons.tv.subtitle"),
-                icon: <GiFilmProjector className="text-[#C4FF00]/100 text-6xl mx-auto mb-4 animate-pulse" />
-              },
-              {
-                title: t("landingPage.reasons.download.title"),
-                subtitle: t("landingPage.reasons.download.subtitle"),
-                icon: <FaDownload className="text-[#C4FF00]/100 text-6xl mx-auto mb-4 animate-pulse" />
-              },
-              {
-                title: t("landingPage.reasons.anywhere.title"),
-                subtitle: t("landingPage.reasons.anywhere.subtitle"),
-                icon: <MdOutlineScreenSearchDesktop className="text-[#C4FF00]/100 text-6xl mx-auto mb-4 animate-pulse" />
-              },
-              {
-                title: t("landingPage.reasons.kids.title"),
-                subtitle: t("landingPage.reasons.kids.subtitle"),
-                icon: <FaChild className="text-[#C4FF00]/100 text-6xl mx-auto mb-4 animate-pulse" />
-              },
-            ].map((f, i) => (
-              <div
-                key={i}
-                className="relative overflow-hidden rounded-2xl p-8
-                           bg-gradient-to-br from-[#C4FF00]/10 via-black/10 to-[#C4FF00]/20
-                           shadow-2xl hover:shadow-3xl transition-transform duration-500 hover:scale-105
-                           backdrop-blur-md"
-              >
-                <div className="relative z-10">{f.icon}</div>
-                <h3 className="font-bold text-xl md:text-2xl text-white mb-2 mt-4">{f.title}</h3>
-                <p className="text-gray-300 text-sm md:text-base leading-relaxed">{f.subtitle}</p>
-                <div className="absolute -top-10 -right-10 w-32 h-32 bg-lime-500/20 rounded-full blur-3xl"></div>
-                <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-lime-500/20 rounded-full blur-3xl"></div>
-              </div>
-            ))}
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <ReasonCard
+              icon={<GiFilmProjector />}
+              title={t("landingPage.reasons.tv.title")}
+              subtitle={t("landingPage.reasons.tv.subtitle")}
+            />
+
+            <ReasonCard
+              icon={<FaDownload />}
+              title={t("landingPage.reasons.download.title")}
+              subtitle={t("landingPage.reasons.download.subtitle")}
+            />
+
+            <ReasonCard
+              icon={<MdOutlineScreenSearchDesktop />}
+              title={t("landingPage.reasons.anywhere.title")}
+              subtitle={t("landingPage.reasons.anywhere.subtitle")}
+            />
+
+            <ReasonCard
+              icon={<FaChild />}
+              title={t("landingPage.reasons.kids.title")}
+              subtitle={t("landingPage.reasons.kids.subtitle")}
+            />
           </div>
         </div>
       </section>
 
-      {/* ====================================================================================== */}
+      {/* FAQ */}
+      <section className="bg-[#090612] px-5 py-20 sm:px-8">
+        <div className="mx-auto max-w-5xl">
+          <div className="mb-10">
+            <h2 className="text-3xl font-bold text-white md:text-4xl">
+              {t("landingPage.faq.title")}
+            </h2>
+          </div>
 
-      <section className="bg-gradient-to-t from-[#191716] via-black/50 to-[#191716] py-12 px-6">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl  font-bold text-white mb-8 tracking-wide">
-            {t("landingPage.faq.title")}
-          </h2>
-          <div className="space-y-2">
-            {[
-              {
-                "q": t("landingPage.faq.q1"),
-                "a": t("landingPage.faq.a1")
-              },
-              {
-                "q": t("landingPage.faq.q2"),
-                "a": t("landingPage.faq.a2")
-              },
-              {
-                "q": t("landingPage.faq.q3"),
-                "a": t("landingPage.faq.a3")
-              },
-              {
-                "q": t("landingPage.faq.q4"),
-                "a": t("landingPage.faq.a4")
-              },
-              {
-                "q": t("landingPage.faq.q5"),
-                "a": t("landingPage.faq.a5")
-              }
-            ].map((item, i) => (
+          <div className="space-y-3">
+            {[1, 2, 3, 4, 5].map((item) => (
               <details
-                key={i}
-                className="group bg-gradient-to-tr from-lime-700/20 via-lime-600/10 to-lime-900/20
-                         backdrop-blur-md rounded-sm p-4
-                         transition-all duration-300 hover:scale-105 shadow-lg"
+                key={item}
+                className="group overflow-hidden rounded-xl border border-purple-500/15 bg-[#120D1D] transition-all duration-300 hover:border-purple-500/30"
               >
-                <summary className="cursor-pointer font-bold text-lg text-white flex justify-between items-center">
-                  {item.q}
-                  <span className="transition-transform duration-300 group-open:rotate-45 text-lime-400 text-xl">+</span>
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-5 px-5 py-5 text-base font-semibold text-white md:text-lg">
+                  <span>
+                    {t(`landingPage.faq.q${item}`)}
+                  </span>
+
+                  <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-purple-500/20 bg-purple-500/10 text-xl text-purple-400 transition-transform duration-300 group-open:rotate-45">
+                    +
+                  </span>
                 </summary>
-                <p className="mt-3 text-gray-300 text-sm md:text-base leading-relaxed">
-                  {item.a}
-                </p>
+
+                <div className="px-5 pb-5">
+                  <p className="text-sm leading-7 text-purple-200/60 md:text-base">
+                    <Trans i18nKey={`landingPage.faq.a${item}`} />
+                  </p>
+                </div>
               </details>
             ))}
           </div>
@@ -372,6 +457,38 @@ const LandingPage: React.FC = () => {
       </section>
 
       <Footer />
+    </div>
+  );
+};
+
+interface ReasonCardProps {
+  icon: React.ReactNode;
+  title: string;
+  subtitle: string;
+}
+
+const ReasonCard: React.FC<ReasonCardProps> = ({
+  icon,
+  title,
+  subtitle,
+}) => {
+  return (
+    <div className="group relative flex min-h-[250px] flex-col items-center justify-center overflow-hidden rounded-2xl border border-purple-500/15 bg-gradient-to-br from-[#120D1D] via-[#160F20] to-[#0F0A17] p-7 text-center shadow-[0_20px_50px_rgba(0,0,0,0.25)] transition-all duration-300 hover:-translate-y-1 hover:border-purple-500/35 hover:shadow-[0_20px_60px_rgba(88,28,135,0.2)]">
+      <div className="relative z-10 mb-5 text-5xl text-purple-400">
+        {icon}
+      </div>
+
+      <h3 className="relative z-10 mb-3 text-xl font-bold text-white">
+        {title}
+      </h3>
+
+      <p className="relative z-10 text-sm leading-6 text-purple-200/55">
+        {subtitle}
+      </p>
+
+      <div className="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-purple-700/15 blur-3xl" />
+
+      <div className="absolute -bottom-16 -left-16 h-40 w-40 rounded-full bg-violet-600/10 blur-3xl" />
     </div>
   );
 };

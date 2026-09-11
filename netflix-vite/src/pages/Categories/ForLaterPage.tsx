@@ -1,13 +1,22 @@
+
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import {
   useGetForLatersQuery,
   useRemoveForLaterMutation,
 } from "../../services/forLaterApi";
-import { getMovieDetails, getSeriesDetails } from "../../services/movieApi";
+import {
+  getMovieDetails,
+  getSeriesDetails,
+} from "../../services/movieApi";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { Play, ThumbsUp, ChevronDown, X } from "lucide-react";
+import {
+  Play,
+  ThumbsUp,
+  ChevronDown,
+  X,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAddFavoriteMutation } from "../../services/favoritesApi";
 import { useAddToHistoryMutation } from "../../services/historyApi";
@@ -27,17 +36,27 @@ interface ForLaterItem {
   forLaterId: number;
 }
 
-
 export default function ForLaterPage() {
-  const { data: forLaters, isLoading, isError } = useGetForLatersQuery();
+  const {
+    data: forLaters,
+    isLoading,
+    isError,
+  } = useGetForLatersQuery();
+
   const [addFavorite] = useAddFavoriteMutation();
   const [removeForLater] = useRemoveForLaterMutation();
   const [addToHistory] = useAddToHistoryMutation();
-  const { t, i18n } = useTranslation();
+
+  const { i18n } = useTranslation();
   const currentLanguage = i18n.language;
 
-  const [forLaterItems, setForLaterItems] = useState<ForLaterItem[]>([]);
-  const [loadingDetails, setLoadingDetails] = useState(false);
+  const [forLaterItems, setForLaterItems] = useState<
+    ForLaterItem[]
+  >([]);
+
+  const [loadingDetails, setLoadingDetails] =
+    useState(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -48,18 +67,29 @@ export default function ForLaterPage() {
 
     const loadDetails = async () => {
       setLoadingDetails(true);
+
       try {
-        const detailsPromises = forLaters.map(async (fl) => {
-          if (fl.contentType === "movie") {
-            const data = await getMovieDetails(fl.contentId, currentLanguage);
-            return {
-              ...data,
-              contentType: "movie" as const,
-              contentId: Number(fl.contentId),
-              forLaterId: fl.id,
-            };
-          } else {
-            const data = await getSeriesDetails(fl.contentId, currentLanguage);
+        const detailsPromises = forLaters.map(
+          async (fl) => {
+            if (fl.contentType === "movie") {
+              const data = await getMovieDetails(
+                fl.contentId,
+                currentLanguage
+              );
+
+              return {
+                ...data,
+                contentType: "movie" as const,
+                contentId: Number(fl.contentId),
+                forLaterId: fl.id,
+              };
+            }
+
+            const data = await getSeriesDetails(
+              fl.contentId,
+              currentLanguage
+            );
+
             return {
               ...data,
               contentType: "tv" as const,
@@ -67,130 +97,312 @@ export default function ForLaterPage() {
               forLaterId: fl.id,
             };
           }
-        });
+        );
 
-        const results = await Promise.all(detailsPromises);
+        const results = await Promise.all(
+          detailsPromises
+        );
+
         setForLaterItems(results);
       } catch (err: any) {
-        toast.error("Error loading 'watch later' details 😢");
+        console.error(
+          "Error loading watch later details:",
+          err
+        );
+
+        toast.error(
+          "Error loading 'watch later' details 😢"
+        );
       } finally {
         setLoadingDetails(false);
       }
     };
 
     loadDetails();
-  }, [forLaters]);
+  }, [forLaters, currentLanguage]);
 
-  const handleAdd = async (id: number, type: string) => {
+  const handleAdd = async (
+    id: number,
+    type: string
+  ) => {
     try {
-      const payload = { contentId: id, contentType: type };
+      const payload = {
+        contentId: id,
+        contentType: type,
+      };
+
       await addFavorite(payload).unwrap();
-      toast.success("Added to favorites ❤️");
+
+      toast.success(
+        "Added to favorites ❤️"
+      );
     } catch (err: any) {
       if (err?.status === 409) {
-        toast.info("Вже у списку улюбленних"); // 👈 нове повідомлення
+        toast.info(
+          "Вже у списку улюбленних"
+        );
       } else {
-        toast.error("Помилка додавання в улюбленні");
+        toast.error(
+          "Помилка додавання в улюбленні"
+        );
       }
     }
   };
 
-  const handleRemove = async (forLaterId: number) => {
+  const handleRemove = async (
+    forLaterId: number
+  ) => {
     try {
-      await removeForLater(forLaterId).unwrap();
-      toast.info("Removed from 'watch later' list ❌");
+      await removeForLater(
+        forLaterId
+      ).unwrap();
+
+      toast.info(
+        "Removed from 'watch later' list ❌"
+      );
+
+      setForLaterItems((prev) =>
+        prev.filter(
+          (item) =>
+            item.forLaterId !== forLaterId
+        )
+      );
     } catch {
-      toast.error("Failed to remove 😢");
+      toast.error(
+        "Failed to remove 😢"
+      );
+    }
+  };
+
+  const handlePlay = async (
+    content: ForLaterItem
+  ) => {
+    try {
+      await addToHistory({
+        id: content.id,
+        mediaType: content.contentType,
+        name:
+          content.title ??
+          content.name,
+      }).unwrap();
+
+      navigate(
+        `/${content.contentType}/${content.id}`
+      );
+    } catch (err) {
+      console.error(
+        "Failed to add to history:",
+        err
+      );
+
+      // Навіть якщо історія не записалась,
+      // все одно відкриваємо контент
+      navigate(
+        `/${content.contentType}/${content.id}`
+      );
     }
   };
 
   return (
-    <div className="bg-black text-white min-h-screen">
-      <Header />
-      <div className="px-8 mt-20 py-10 max-w-[1600px] mx-auto">
-        <h1 className="text-3xl font-bold mb-6">Watch Later</h1>
+    <div className="min-h-screen bg-[#090612] text-white relative overflow-hidden">
+      {/* Background glow */}
+      <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-purple-700/15 blur-3xl pointer-events-none" />
 
-        {(isLoading || loadingDetails) && (
-          <p className="text-gray-400">Loading...</p>
-        )}
-        {isError && (
-          <p className="text-red-500">Error loading 'watch later' list</p>
-        )}
-        {!isLoading && forLaterItems.length === 0 && (
-          <p className="text-gray-400">Your 'watch later' list is empty 😢</p>
-        )}
+      <div className="absolute top-[35%] -right-40 w-[500px] h-[500px] rounded-full bg-violet-600/10 blur-3xl pointer-events-none" />
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
-          {forLaterItems.map((content) => (
-            <div
-              key={content.id}
-              className="relative group cursor-pointer rounded-lg overflow-hidden bg-black"
-            >
-              <img
-                src={
-                  content.poster_path
-                    ? `${IMAGE_BASE_URL}${content.poster_path}`
-                    : "/no-poster.png"
-                }
-                alt={content.title || content.name}
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-              />
+      <div className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full bg-purple-700/10 blur-3xl pointer-events-none" />
 
-              <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out bg-black/90 p-3 rounded-t-lg">
-                <div className="flex items-center gap-3 mb-3">
-                  <button
-                    onClick={async () => { 
-                      await addToHistory({
-                        id: content.id,
-                        mediaType: content.contentType,
-                        name: content.title ?? content.name,
-                        }).unwrap();
-                      navigate(`/${content.contentType}/${content.id}`);
-                    }}
-                    className="bg-white text-black rounded-full p-2 hover:scale-110 transition"
-                  >
-                    <Play size={18} />
-                  </button>
-
-                  <button
-                    onClick={() => handleAdd(content.id, content.contentType)}
-                    className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
-                  >
-                    <ThumbsUp size={18} />
-                  </button>
-
-                  <button
-                    onClick={() => handleRemove(content.forLaterId)}
-                    className="ml-auto border border-red-400 text-red-400 rounded-full p-2 hover:bg-red-700 transition"
-                  >
-                    <X size={18} />
-                  </button>
-
-                  <button
-                    onClick={() => toast.info("More details coming soon 😉")}
-                    className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
-                  >
-                    <ChevronDown size={18} />
-                  </button>
-                </div>
-
-                <div className="flex flex-wrap gap-2 text-xs text-gray-300">
-                  <span className="px-2 py-0.5 border border-gray-500 rounded">
-                    HD
-                  </span>
-                  <span className="px-2 py-0.5 border border-gray-500 rounded">
-                    6+
-                  </span>
-                  {content.genres?.slice(0, 3).map((g) => (
-                    <span key={g.id}>{g.name}</span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+      {/* Header */}
+      <div className="relative z-20">
+        <Header />
       </div>
-      <Footer />
+
+      {/* Main */}
+      <main className="relative z-10 pt-24 pb-12">
+        <div className="max-w-[1600px] mx-auto px-4 md:px-6 lg:px-10">
+          {/* Title */}
+          <div className="mb-7">
+            <h1 className="text-2xl md:text-3xl font-bold text-white">
+              Watch Later
+            </h1>
+
+            <div className="mt-3 h-px w-full bg-gradient-to-r from-purple-500/60 via-violet-500/20 to-transparent" />
+          </div>
+
+          {/* Content */}
+          <div className="rounded-xl border border-white/10 bg-[#120D1D] p-4 md:p-6">
+            {/* Loading */}
+            {(isLoading || loadingDetails) && (
+              <div className="flex items-center justify-center py-16">
+                <p className="text-gray-400">
+                  Loading...
+                </p>
+              </div>
+            )}
+
+            {/* Error */}
+            {isError &&
+              !isLoading && (
+                <div className="flex items-center justify-center py-16">
+                  <p className="text-red-400">
+                    Error loading 'watch later' list
+                  </p>
+                </div>
+              )}
+
+            {/* Empty */}
+            {!isLoading &&
+              !loadingDetails &&
+              !isError &&
+              forLaterItems.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-16">
+                  <div className="w-14 h-14 rounded-full bg-purple-600/10 border border-purple-500/20 flex items-center justify-center mb-4">
+                    <span className="text-2xl">
+                      +
+                    </span>
+                  </div>
+
+                  <p className="text-gray-400 text-center">
+                    Your 'watch later' list is empty 😢
+                  </p>
+                </div>
+              )}
+
+            {/* Grid */}
+            {!isLoading &&
+              !loadingDetails &&
+              forLaterItems.length > 0 && (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-5">
+                  {forLaterItems.map(
+                    (content) => (
+                      <div
+                        key={content.id}
+                        className="relative group cursor-pointer rounded-xl overflow-hidden border border-white/10 bg-[#0D0915] aspect-[2/3] shadow-lg shadow-black/20"
+                      >
+                        {/* Poster */}
+                        <img
+                          src={
+                            content.poster_path
+                              ? `${IMAGE_BASE_URL}${content.poster_path}`
+                              : "/no-poster.png"
+                          }
+                          alt={
+                            content.title ||
+                            content.name
+                          }
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+
+                        {/* Gradient */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80 pointer-events-none" />
+
+                        {/* Hover panel */}
+                        <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out bg-[#0D0915]/95 backdrop-blur-sm p-3 border-t border-purple-500/10">
+                          {/* Buttons */}
+                          <div className="flex items-center gap-2 mb-3">
+                            {/* Play */}
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handlePlay(
+                                  content
+                                )
+                              }
+                              className="bg-white text-black rounded-full p-2 hover:scale-110 hover:bg-gray-200 transition"
+                              title="Play"
+                            >
+                              <Play
+                                size={17}
+                                fill="currentColor"
+                              />
+                            </button>
+
+                            {/* Add to favorites */}
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleAdd(
+                                  content.id,
+                                  content.contentType
+                                )
+                              }
+                              className="border border-white/30 rounded-full p-2 text-white hover:bg-purple-600/30 hover:border-purple-400 transition"
+                              title="Add to favorites"
+                            >
+                              <ThumbsUp size={17} />
+                            </button>
+
+                            {/* Remove */}
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleRemove(
+                                  content.forLaterId
+                                )
+                              }
+                              className="ml-auto border border-red-400/50 text-red-400 rounded-full p-2 hover:bg-red-500/20 hover:border-red-400 transition"
+                              title="Remove from watch later"
+                            >
+                              <X size={17} />
+                            </button>
+
+                            {/* More */}
+                            <button
+                              type="button"
+                              onClick={() =>
+                                toast.info(
+                                  "More details coming soon 😉"
+                                )
+                              }
+                              className="border border-white/30 rounded-full p-2 text-white hover:bg-purple-600/30 hover:border-purple-400 transition"
+                              title="More details"
+                            >
+                              <ChevronDown size={17} />
+                            </button>
+                          </div>
+
+                          {/* Metadata */}
+                          <div className="flex flex-wrap items-center gap-2 text-xs text-gray-300">
+                            <span className="px-2 py-0.5 rounded border border-white/20 bg-white/5">
+                              HD
+                            </span>
+
+                            <span className="px-2 py-0.5 rounded border border-white/20 bg-white/5">
+                              6+
+                            </span>
+
+                            {content.genres
+                              ?.slice(0, 3)
+                              .map(
+                                (genre) => (
+                                  <span
+                                    key={
+                                      genre.id
+                                    }
+                                    className="text-gray-400"
+                                  >
+                                    {
+                                      genre.name
+                                    }
+                                  </span>
+                                )
+                              )}
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  )}
+                </div>
+              )}
+          </div>
+        </div>
+      </main>
+
+      {/* Footer */}
+      <div className="relative z-10">
+        <Footer />
+      </div>
     </div>
   );
 }
+
