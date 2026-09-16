@@ -244,9 +244,13 @@ const MovieDetailsPage = () => {
 
   if (!movie){
     return (
-      <p className="text-white text-center mt-10 animate-fadeIn">
-        {t("movieDetails.loading")}
-      </p>
+      <div className="min-h-screen bg-[#090612] flex items-center justify-center relative overflow-hidden">
+        <div className="absolute -top-40 -left-40 w-[450px] h-[450px] rounded-full bg-purple-700/15 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-40 -right-40 w-[450px] h-[450px] rounded-full bg-violet-600/15 blur-3xl pointer-events-none" />
+        <p className="relative z-10 text-gray-300 text-lg animate-pulse">
+          {t("movieDetails.loading")}
+        </p>
+      </div>
     );
   }
 
@@ -256,7 +260,14 @@ const MovieDetailsPage = () => {
 
 
   return (
-    <div className="bg-[#191716] text-white min-h-screen">
+    <div className="bg-[#090612] text-white min-h-screen relative overflow-hidden">
+
+      {/* Background glow */}
+      <div className="fixed -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-purple-700/15 blur-3xl pointer-events-none z-0" />
+      <div className="fixed -bottom-40 -right-40 w-[500px] h-[500px] rounded-full bg-violet-600/15 blur-3xl pointer-events-none z-0" />
+
+      <div className="relative z-10">
+
       <Header />
 
       {/* Backdrop */}
@@ -264,7 +275,7 @@ const MovieDetailsPage = () => {
         className="relative h-[80vh] top-20 w-full bg-cover bg-center"
         style={{ backgroundImage: `url(${backdropUrl})` }}
       >
-        <div className="absolute inset-0 bg-gradient-to-t from-[#191716] via-[#191716]/70 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-[#090612] via-[#090612]/70 to-transparent"></div>
       </div>
 
       {/* Details */}
@@ -280,29 +291,29 @@ const MovieDetailsPage = () => {
             <div className="flex items-center gap-4 mt-4">
               <button
                 onClick={scrollToTrailer}
-                className="bg-[#C4FF00] gap-2 text-2xl text-black font-semibold rounded-sm w-1/4 h-12 flex items-center justify-center hover:scale-110 transition"
+                className="bg-gradient-to-r from-purple-600 to-violet-500 gap-2 text-2xl text-white font-semibold rounded-xl w-1/4 h-12 flex items-center justify-center hover:from-purple-500 hover:to-violet-400 hover:scale-[1.03] shadow-lg shadow-purple-900/30 transition"
               >
-                <Play size={18} />
+                <Play size={18} fill="currentColor" />
                 {t("movieDetails.watchButton")}
               </button>
 
               <button
                 onClick={() => handleAdd(movie.id)}
-                className="border border-gray-400 bg-gray-400/10 rounded-full w-12 h-12 flex items-center justify-center ml-8 text-white hover:bg-gray-700/10 transition"
+                className="border border-white/10 bg-white/5 backdrop-blur-xl rounded-full w-12 h-12 flex items-center justify-center ml-8 text-gray-300 hover:bg-white/10 hover:text-white hover:border-purple-500/50 hover:scale-105 transition"
               >
                 <Plus size={18} />
               </button>
 
               <button
                 onClick={handleFavorite}
-                className={`border border-gray-400 rounded-full w-12 h-12 flex items-center justify-center text-white hover:bg-gray-700 transition ${
+                className={`border rounded-full w-12 h-12 flex items-center justify-center backdrop-blur-xl hover:scale-105 transition ${
                   inFavorites
-                    ? "bg-gray-800 hover:bg-gray-700"
-                    : "bg-gray-400/10 text-black hover:bg-gray-700/10"
+                    ? "bg-purple-600/20 border-purple-500/60 text-purple-400"
+                    : "bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:text-white"
                 }`}
               >
                 <ThumbsUp
-                  className={`w-6 h-6 ${inFavorites ? "text-[#C4FF00]" : "text-white"}`}
+                  className={`w-6 h-6 ${inFavorites ? "text-purple-400" : ""}`}
                 />
               </button>
             </div>
@@ -367,8 +378,8 @@ const MovieDetailsPage = () => {
       {/* Trailer */}
       {trailer && (
         <div ref={trailerRef} id="trailer-section" className="relative mt-20 max-w-7xl mx-auto px-4 md:px-0 animate-fadeIn">
-          <h2 className="text-3xl bg-[#3D3B3A] rounded-sm text-center absolute -mt-10 h-24 w-1/6 font-semibold ">{t("movieDetails.trailer")}</h2>
-          <div className="aspect-video z-100 overflow-hidden shadow-2xl z-10 relative">
+          <h2 className="text-3xl bg-[#120D1D] border border-white/10 rounded-xl text-center absolute -mt-10 h-24 w-1/6 font-semibold flex items-center justify-center">{t("movieDetails.trailer")}</h2>
+          <div className="aspect-video z-100 overflow-hidden rounded-xl border border-white/10 shadow-2xl shadow-purple-950/20 z-10 relative">
 
             <iframe
               src={`https://www.youtube.com/embed/${trailer.key}`}
@@ -389,47 +400,47 @@ const MovieDetailsPage = () => {
 
               <div
                 key={c.id}
-                className="cursor-pointer hover:scale-105 transition-transform rounded-lg border-b-2 border-r-2 border-[#C4FF00] min-w-[256px]"
+                className="cursor-pointer hover:-translate-y-2 transition-all duration-300 rounded-2xl border border-white/10 bg-[#120D1D]/95 backdrop-blur-xl shadow-2xl shadow-purple-950/20 hover:border-purple-500/40 hover:shadow-purple-900/30 min-w-[256px]"
                 onClick={() => handlePlay(c.id, c.title)} // Клік на картку веде на фільм
               >
                 <img
                   src={`https://image.tmdb.org/t/p/w300${c.poster_path}`}
                   alt={c.title}
-                  className="rounded-t-lg shadow-md w-full h-80 object-cover"
+                  className="rounded-t-2xl shadow-md w-full h-80 object-cover"
                 />
-              <div className="bg-[#191716] h-24 rounded-b-lg p-2">
+              <div className="p-3">
                 <div className="flex items-center gap-2 mb-3">
                 <button
                   onClick={(e) => { e.stopPropagation(); handlePlay(c.id, c.title); }}
-                  className="bg-white text-black rounded-full p-2 hover:scale-110 transition"
+                  className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-violet-500 text-white flex items-center justify-center hover:from-purple-500 hover:to-violet-400 hover:scale-110 shadow-lg shadow-purple-900/30 transition"
                 >
-                  <Play size={18} />
+                  <Play size={17} fill="currentColor" />
                 </button>
                 <button
                   onClick={(e) => { e.stopPropagation(); handleAdd(c.id); }}
-                  className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                  className="w-10 h-10 rounded-full border border-white/10 bg-white/5 text-gray-300 flex items-center justify-center hover:bg-white/10 hover:text-white hover:border-purple-500/40 transition"
                 >
                   <Plus size={18} />
                 </button>
                 <button
                   onClick={(e) => { e.stopPropagation(); handleLike(c.id); }}
-                  className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                  className="w-10 h-10 rounded-full border border-white/10 bg-white/5 text-gray-300 flex items-center justify-center hover:bg-white/10 hover:text-white hover:border-purple-500/40 transition"
                 >
-                  <ThumbsUp size={18} />
+                  <ThumbsUp size={17} />
                 </button>
                 <button
                   onClick={(e) => { e.stopPropagation(); setOpenedRec(c as Movie); }}
-                  className="ml-auto border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                  className="ml-auto w-10 h-10 rounded-full border border-white/10 bg-white/5 text-gray-300 flex items-center justify-center hover:bg-white/10 hover:text-white hover:border-purple-500/40 transition"
                 >
                   <ChevronDown size={18} />
                 </button>
               </div>
 
-              <div className="flex flex-wrap gap-2 text-xs text-gray-300">
-                <span className="px-2 py-0.5 border border-gray-500 rounded">HD</span>
-                <span className="px-2 py-0.5 border border-gray-500 rounded">16+</span>
+              <div className="flex flex-wrap gap-2 text-xs text-gray-400">
+                <span className="px-2 py-0.5 border border-white/10 bg-white/5 rounded-md">HD</span>
+                <span className="px-2 py-0.5 border border-white/10 bg-white/5 rounded-md">16+</span>
                 {/* Оскільки c.genres недоступний тут, тимчасово ігноруємо, або припустимо, що в c є genre_ids */}
-                <span className="text-sm font-semibold">{c.title.split(' ').pop()}</span>
+                <span className="text-sm font-semibold text-gray-200">{c.title.split(' ').pop()}</span>
               </div>
               </div>
             </div>
@@ -444,18 +455,18 @@ const MovieDetailsPage = () => {
         <div className="max-w-7xl mx-auto px-4 md:px-0 mt-16 animate-fadeIn">
           <div className="inline-flex justify-between w-full">
             <h2 className="text-3xl font-semibold mb-6">{t("movieDetails.recommendations")}</h2>
-            <div className="flex">
+            <div className="flex gap-2">
             <button
               onClick={() => scroll('left')}
-              className="w-8 h-12 text-white flex items-center justify-center rounded-md hover:bg-opacity-75 transition-colors duration-200"
+              className="w-10 h-10 rounded-xl border border-white/10 bg-white/5 text-gray-300 flex items-center justify-center hover:bg-white/10 hover:text-white hover:border-purple-500/40 transition"
             >
-              <span className="text-5xl font-regular">‹</span>
+              <span className="text-3xl font-regular">‹</span>
             </button>
             <button
               onClick={() => scroll('right')}
-              className="w-8 h-12 text-white flex items-center justify-center rounded-md hover:bg-opacity-75 transition-colors duration-200"
+              className="w-10 h-10 rounded-xl border border-white/10 bg-white/5 text-gray-300 flex items-center justify-center hover:bg-white/10 hover:text-white hover:border-purple-500/40 transition"
             >
-              <span className="text-5xl font-regular">›</span>
+              <span className="text-3xl font-regular">›</span>
             </button>
           </div>
           </div>
@@ -466,45 +477,45 @@ const MovieDetailsPage = () => {
             {recommendations.map((rec) => (
               <div
                 key={rec.id}
-                className="cursor-pointer hover:scale-105 transition-transform rounded-lg border-b-2 border-r-2 border-[#C4FF00] relative min-w-[256px]"
+                className="cursor-pointer hover:-translate-y-2 transition-all duration-300 rounded-2xl border border-white/10 bg-[#120D1D]/95 backdrop-blur-xl shadow-2xl shadow-purple-950/20 hover:border-purple-500/40 hover:shadow-purple-900/30 relative min-w-[256px]"
                 onClick={() => handlePlay(rec.id, rec.title)}
               >
                 <img
                   src={`https://image.tmdb.org/t/p/w300${rec.poster_path}`}
                   alt={rec.title}
-                  className="rounded-t-lg shadow-md w-full h-80 object-cover "
+                  className="rounded-t-2xl shadow-md w-full h-80 object-cover "
                 />
-                <div className="bg-[#191716] h-24 rounded-b-lg p-2">
+                <div className="p-3">
                 <div className="flex items-center gap-2 mb-3">
                 <button
                   onClick={(e) => { e.stopPropagation(); handlePlay(rec.id, rec.title); }}
-                  className="bg-white text-black rounded-full p-2 hover:scale-105 transition"
+                  className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-violet-500 text-white flex items-center justify-center hover:from-purple-500 hover:to-violet-400 hover:scale-110 shadow-lg shadow-purple-900/30 transition"
                 >
-                  <Play size={18} />
+                  <Play size={17} fill="currentColor" />
                 </button>
                 <button
                   onClick={(e) => { e.stopPropagation(); handleAdd(rec.id); }} 
-                  className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                  className="w-10 h-10 rounded-full border border-white/10 bg-white/5 text-gray-300 flex items-center justify-center hover:bg-white/10 hover:text-white hover:border-purple-500/40 transition"
                 >
                   <Plus size={18} />
                 </button>
                 <button
                   onClick={(e) => { e.stopPropagation(); handleLike(rec.id); }} 
-                  className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                  className="w-10 h-10 rounded-full border border-white/10 bg-white/5 text-gray-300 flex items-center justify-center hover:bg-white/10 hover:text-white hover:border-purple-500/40 transition"
                 >
-                  <ThumbsUp size={18} />
+                  <ThumbsUp size={17} />
                 </button>
                 <button
                   onClick={(e) => { e.stopPropagation(); setOpenedRec(rec); }}
-                  className="ml-auto border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                  className="ml-auto w-10 h-10 rounded-full border border-white/10 bg-white/5 text-gray-300 flex items-center justify-center hover:bg-white/10 hover:text-white hover:border-purple-500/40 transition"
                 >
                   <ChevronDown size={18} />
                 </button>
               </div>
 
-              <div className="flex flex-wrap gap-2 text-xs text-gray-300">
-                <span className="px-2 py-0.5 border border-gray-500 rounded">HD</span>
-                <span className="px-2 py-0.5 border border-gray-500 rounded">16+</span>
+              <div className="flex flex-wrap gap-2 text-xs text-gray-400">
+                <span className="px-2 py-0.5 border border-white/10 bg-white/5 rounded-md">HD</span>
+                <span className="px-2 py-0.5 border border-white/10 bg-white/5 rounded-md">16+</span>
               
               </div>
               </div>
@@ -519,18 +530,18 @@ const MovieDetailsPage = () => {
         <div className="max-w-7xl mx-auto px-4 md:px-0 mt-16 animate-fadeIn">
           <div className="inline-flex justify-between w-full">
           <h2 className="text-3xl font-semibold mb-6">{t("movieDetails.similar")}</h2>
-            <div className="flex">
+            <div className="flex gap-2">
             <button
               onClick={() => scroll2('left')}
-              className="w-8 h-12 text-white flex items-center justify-center rounded-md hover:bg-opacity-75 transition-colors duration-200"
+              className="w-10 h-10 rounded-xl border border-white/10 bg-white/5 text-gray-300 flex items-center justify-center hover:bg-white/10 hover:text-white hover:border-purple-500/40 transition"
             >
-              <span className="text-5xl font-regular">‹</span>
+              <span className="text-3xl font-regular">‹</span>
             </button>
             <button
               onClick={() => scroll2('right')}
-              className="w-8 h-12 text-white flex items-center justify-center rounded-md hover:bg-opacity-75 transition-colors duration-200"
+              className="w-10 h-10 rounded-xl border border-white/10 bg-white/5 text-gray-300 flex items-center justify-center hover:bg-white/10 hover:text-white hover:border-purple-500/40 transition"
             >
-              <span className="text-5xl font-regular">›</span>
+              <span className="text-3xl font-regular">›</span>
             </button>
           </div>
           </div>
@@ -538,45 +549,45 @@ const MovieDetailsPage = () => {
             {similar.map((sm) => (
               <div
                 key={sm.id}
-                className="cursor-pointer hover:scale-105 transition-transform rounded-lg border-b-2 border-r-2 border-[#C4FF00] min-w-[256px]"
+                className="cursor-pointer hover:-translate-y-2 transition-all duration-300 rounded-2xl border border-white/10 bg-[#120D1D]/95 backdrop-blur-xl shadow-2xl shadow-purple-950/20 hover:border-purple-500/40 hover:shadow-purple-900/30 min-w-[256px]"
                 onClick={() => handlePlay(sm.id, sm.title)}
               >
                 <img
                   src={`https://image.tmdb.org/t/p/w300${sm.poster_path}`}
                   alt={sm.title}
-                  className="rounded-t-lg shadow-md w-full h-80 object-cover "
+                  className="rounded-t-2xl shadow-md w-full h-80 object-cover "
                 />
-                <div className="bg-[#191716] h-24 rounded-b-lg p-2">
+                <div className="p-3">
                 <div className="flex items-center gap-2 mb-3">
                 <button
                   onClick={(e) => { e.stopPropagation(); handlePlay(sm.id, sm.title); }}
-                  className="bg-white text-black rounded-full p-2 hover:scale-110 transition"
+                  className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-violet-500 text-white flex items-center justify-center hover:from-purple-500 hover:to-violet-400 hover:scale-110 shadow-lg shadow-purple-900/30 transition"
                 >
-                  <Play size={18} />
+                  <Play size={17} fill="currentColor" />
                 </button>
                 <button
                   onClick={(e) => { e.stopPropagation(); handleAdd(sm.id); }}
-                  className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                  className="w-10 h-10 rounded-full border border-white/10 bg-white/5 text-gray-300 flex items-center justify-center hover:bg-white/10 hover:text-white hover:border-purple-500/40 transition"
                 >
                   <Plus size={18} />
                 </button>
                 <button
                   onClick={(e) => { e.stopPropagation(); handleLike(sm.id); }}
-                  className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                  className="w-10 h-10 rounded-full border border-white/10 bg-white/5 text-gray-300 flex items-center justify-center hover:bg-white/10 hover:text-white hover:border-purple-500/40 transition"
                 >
-                  <ThumbsUp size={18} />
+                  <ThumbsUp size={17} />
                 </button>
                 <button
                   onClick={(e) => { e.stopPropagation(); setOpenedRec(sm); }}
-                  className="ml-auto border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                  className="ml-auto w-10 h-10 rounded-full border border-white/10 bg-white/5 text-gray-300 flex items-center justify-center hover:bg-white/10 hover:text-white hover:border-purple-500/40 transition"
                 >
                   <ChevronDown size={18} />
                 </button>
               </div>
 
-              <div className="flex flex-wrap gap-2 text-xs text-gray-300">
-                <span className="px-2 py-0.5 border border-gray-500 rounded">HD</span>
-                <span className="px-2 py-0.5 border border-gray-500 rounded">12+</span>
+              <div className="flex flex-wrap gap-2 text-xs text-gray-400">
+                <span className="px-2 py-0.5 border border-white/10 bg-white/5 rounded-md">HD</span>
+                <span className="px-2 py-0.5 border border-white/10 bg-white/5 rounded-md">12+</span>
                 
               </div>
               </div>
@@ -587,30 +598,32 @@ const MovieDetailsPage = () => {
       )}
 
       {/* Comments */}
-      <div className="max-w-7xl mx-auto px-4 md:px-0 mt-16 gap-12">
-        <RatingAndComments
-          contentId={movie.id}
-          contentType="movie"
-          vote_average={movie.vote_average}
-        />
+      <div className="max-w-7xl mx-auto px-4 md:px-0 mt-16 mb-20 gap-12">
+        <div className="rounded-2xl border border-white/10 bg-[#120D1D]/80 backdrop-blur-xl p-5 md:p-8 shadow-2xl shadow-purple-950/20">
+          <RatingAndComments
+            contentId={movie.id}
+            contentType="movie"
+            vote_average={movie.vote_average}
+          />
+        </div>
       </div>
 
       {openedRec && (
           <div 
-              className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" 
+              className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4" 
               onClick={() => setOpenedRec(null)} 
           >
               <div 
-                  className="bg-[#191716] max-w-lg w-full rounded-xl p-6 relative shadow-[0_0_2px_#C4FF00] animate-fadeIn transform transition-all"
+                  className="bg-[#120D1D] border border-white/10 max-w-lg w-full rounded-2xl p-6 relative shadow-2xl shadow-purple-950/50 animate-fadeIn transform transition-all"
                   onClick={(e) => e.stopPropagation()}
               >
                   <button
                       onClick={() => setOpenedRec(null)}
-                      className="absolute top-4 right-4 text-[#C4FF00] hover:text-white transition-colors text-2xl"
+                      className="absolute top-4 right-4 w-9 h-9 rounded-full border border-white/10 bg-white/5 text-gray-400 flex items-center justify-center hover:bg-white/10 hover:text-white hover:border-purple-500/40 transition"
                   >
                       ✕
                   </button>
-                  <h3 className="text-[#C4FF00] text-3xl font-bold mb-4 border-b border-gray-700 pb-2">{openedRec.title || openedRec.original_title}</h3>
+                  <h3 className="text-white text-2xl md:text-3xl font-bold mb-4 pr-10 border-b border-white/10 pb-4">{openedRec.title || openedRec.original_title}</h3>
                   <p className="text-base text-gray-300 overflow-y-auto max-h-64 mt-4">
                       {openedRec.overview || t("movieDetails.noOverview")}
                   </p>
@@ -620,8 +633,9 @@ const MovieDetailsPage = () => {
                               handlePlay(openedRec.id, openedRec.title);
                               setOpenedRec(null);
                           }}
-                          className="bg-[#C4FF00] text-black font-semibold px-6 py-2 rounded-full hover:bg-lime-600 transition"
+                          className="bg-gradient-to-r from-purple-600 to-violet-500 text-white font-semibold px-6 py-3 rounded-xl flex items-center gap-2 hover:from-purple-500 hover:to-violet-400 shadow-lg shadow-purple-900/20 transition"
                       >
+                          <Play size={16} fill="currentColor" />
                           {t("movieDetails.play")}
                       </button>
                   </div>
@@ -630,6 +644,7 @@ const MovieDetailsPage = () => {
       )}
 
       <Footer />
+      </div>
     </div>
   );
 };

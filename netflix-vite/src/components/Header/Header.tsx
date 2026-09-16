@@ -67,7 +67,7 @@ const Header = () => {
 
   return (
     <header
-      className={`fixed top-0 w-full bg-[#171716]/100 backdrop-blur-md z-20 transition-transform duration-300 ${
+      className={`fixed top-0 w-full bg-[#090612]/90 backdrop-blur-xl border-b border-white/10 z-20 transition-transform duration-300 ${
         showHeader ? "translate-y-0" : "-translate-y-full"
       }`}
     >
@@ -81,9 +81,9 @@ const Header = () => {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`text-white hover:text-lime-400 transition no-underline ${
+                className={`text-gray-300 hover:text-white transition no-underline ${
                   location.pathname === item.path
-                    ? "border-b-2 border-lime-400 pb-1"
+                    ? "text-white border-b-2 border-purple-500 pb-1"
                     : ""
                 }`}
               >
@@ -101,11 +101,11 @@ const Header = () => {
               placeholder="Search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="w-40 px-3 py-1 rounded bg-zinc-800 text-white text-sm focus:outline-none focus:ring-1 focus:ring-lime-400"
+              className="w-40 px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 text-white text-sm placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-purple-500/60 focus:border-purple-500/40 transition"
             />
             <button
               type="submit"
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-lime-400"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-purple-400 transition"
             >
               <Search size={18} />
             </button>
@@ -113,7 +113,7 @@ const Header = () => {
           {isFilterVisible && (
             <button
             onClick={() => setShowFilters(true)}
-            className="text-gray-300 ml-3 hover:text-lime-400 transition"
+            className="text-gray-300 ml-3 hover:text-purple-400 transition"
           >
             <SlidersHorizontal size={22} />
           </button>
@@ -132,10 +132,10 @@ const Header = () => {
       <img
         src={user?.profilePictureUrl ? `http://localhost:5170/${user.profilePictureUrl}` : "/default-avatar.png"}
         alt={user.fullName}
-        className="w-8 h-8 rounded-sm object-cover shadow-xl"
+        className="w-8 h-8 rounded-lg object-cover shadow-lg shadow-purple-950/30 border border-white/10"
       />
     ) : (
-      <div className="bg-gradient-to-br from-[#C4FF00] to-[#C4FF00]/50 w-8 h-8 text-black rounded-sm flex items-center justify-center text-xs font-bold shadow-xl">
+      <div className="bg-gradient-to-br from-purple-600 to-violet-500 w-8 h-8 text-white rounded-lg flex items-center justify-center text-xs font-bold shadow-lg shadow-purple-950/30">
         {getInitials(user?.fullName || "")}
       </div>
     )}
@@ -152,30 +152,34 @@ const Header = () => {
         left-1/2 -translate-x-1/2 
         mt-2 
         w-48 
-        bg-black/80 
+        rounded-xl
+        border
+        border-white/10
+        bg-[#120D1D]/95
+        backdrop-blur-xl
         text-white 
-        rounded-md 
-        shadow-lg 
+        shadow-2xl
+        shadow-purple-950/40
         py-1 
         z-50
       "
     >
       <Link
         to="/profile"
-        className="flex no-underline items-center gap-2 px-4 py-2 text-white hover:bg-neutral-800"
+        className="flex no-underline items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-white/5 transition"
       >
         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
           <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
         </svg>
         Account
       </Link>
-      <div className="border-t border-neutral-700 my-2" />
+      <div className="border-t border-white/10 my-2" />
       <button
         onClick={() => {
           localStorage.removeItem("accessToken");
           navigate("/login");
         }}
-        className="flex items-center gap-2 px-4 py-2 w-full hover:bg-neutral-800 rounded-sm transition"
+        className="flex items-center gap-2 px-4 py-2 w-full text-gray-300 hover:text-white hover:bg-white/5 rounded-sm transition"
       >
         <LogOut size={18} />
         {t("profile.overview.logOut")}

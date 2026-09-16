@@ -1,11 +1,15 @@
+
 import { useState, useEffect } from "react";
-// Примітка: Оскільки компілятор не може знайти цей шлях, 
-// ми припускаємо, що це зовнішній файл, який існує у вашій структурі.
-import { useUpdateUserMutation } from "../services/userApi"; 
+import { useUpdateUserMutation } from "../services/userApi";
 import type { UserProfile } from "../types/user";
-import { User, Mail, Lock, Image as ImageIcon, X } from "lucide-react";
-// Примітка: Припускаємо, що це зовнішня бібліотека.
-import { useTranslation } from "react-i18next"; 
+import {
+  User,
+  Mail,
+  Lock,
+  Image as ImageIcon,
+  X,
+} from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface ProfileEditModalProps {
   isOpen: boolean;
@@ -14,9 +18,14 @@ interface ProfileEditModalProps {
   user: UserProfile | null;
 }
 
-const ProfileEditModal = ({ isOpen, onClose, field, user }: ProfileEditModalProps) => {
-  const { t } = typeof useTranslation === 'function' ? useTranslation() : { t: (key: string) => key };
-  
+const ProfileEditModal = ({
+  isOpen,
+  onClose,
+  field,
+  user,
+}: ProfileEditModalProps) => {
+  const { t } = useTranslation();
+
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -40,147 +49,516 @@ const ProfileEditModal = ({ isOpen, onClose, field, user }: ProfileEditModalProp
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!user) return;
 
     const formData = new FormData();
-    formData.append("Id", user.id.toString());
-    
 
+    formData.append("Id", user.id.toString());
     formData.append("FullName", fullName);
     formData.append("Email", email);
 
-    let shouldUpdate = false; 
+    let shouldUpdate = false;
 
-
-    if (field === 'fullName') {
-        if (fullName.trim() !== (user.fullName || '').trim()) {
-            shouldUpdate = true;
-        }
-    } else if (field === 'email') {
-        if (email.trim() !== (user.email || '').trim()) {
-            shouldUpdate = true;
-        }
-    } else if (field === 'password') {
-        if (password) {
-            formData.append("Password", password);
-            shouldUpdate = true;
-        }
-    } else if (field === 'photo') {
-        if (avatar) {
-            formData.append("ProfilePictureFile", avatar);
-            shouldUpdate = true;
-        }
+    if (field === "fullName") {
+      if (
+        fullName.trim() !==
+        (user.fullName || "").trim()
+      ) {
+        shouldUpdate = true;
+      }
+    } else if (field === "email") {
+      if (
+        email.trim() !==
+        (user.email || "").trim()
+      ) {
+        shouldUpdate = true;
+      }
+    } else if (field === "password") {
+      if (password) {
+        formData.append("Password", password);
+        shouldUpdate = true;
+      }
+    } else if (field === "photo") {
+      if (avatar) {
+        formData.append(
+          "ProfilePictureFile",
+          avatar
+        );
+        shouldUpdate = true;
+      }
     }
 
     if (!shouldUpdate) {
-        onClose();
-        return;
+      onClose();
+      return;
     }
-
-
 
     try {
       await updateUser(formData).unwrap();
       onClose();
     } catch (err) {
-      console.error(t("profileEditModal.error"), err);
+      console.error(
+        t("profileEditModal.error"),
+        err
+      );
     }
   };
 
   if (!isOpen) return null;
 
+  const currentAvatar =
+    avatar
+      ? URL.createObjectURL(avatar)
+      : user?.profilePictureUrl || "";
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6">
+      {/* Затемнення */}
       <div
         onClick={onClose}
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-300 opacity-100"
+        className="
+          absolute
+          inset-0
+          bg-black/80
+          backdrop-blur-md
+        "
       />
+
+      {/* Фіолетове світіння */}
       <div
-        className="relative bg-[#191716] backdrop-blur-xl p-8 rounded-lg w-full max-w-lg text-white
-                    transform transition-all duration-300 scale-100 opacity-100 shadow-[0_0_5px_#C4FF00]"
+        className="
+          pointer-events-none
+          absolute
+          left-1/2
+          top-1/2
+          h-[450px]
+          w-[450px]
+          -translate-x-1/2
+          -translate-y-1/2
+          rounded-full
+          bg-purple-700/20
+          blur-[140px]
+        "
+      />
+
+      {/* Modal */}
+      <div
+        className="
+          relative
+          z-10
+          w-full
+          max-w-lg
+          overflow-hidden
+          rounded-3xl
+          border
+          border-white/10
+          bg-[#120D1D]
+          text-white
+          shadow-2xl
+          shadow-purple-950/40
+          backdrop-blur-2xl
+        "
       >
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-white transition"
+        {/* Верхня декоративна лінія */}
+        <div
+          className="
+            absolute
+            left-0
+            right-0
+            top-0
+            h-px
+            bg-gradient-to-r
+            from-transparent
+            via-purple-500
+            to-transparent
+          "
+        />
+
+        {/* Header */}
+        <div
+          className="
+            flex
+            items-center
+            justify-between
+            border-b
+            border-white/10
+            px-6
+            py-5
+            sm:px-7
+          "
         >
-          <X size={24} />
-        </button>
-        <div className="flex flex-col items-left space-y-3">
-          <h2 className="text-3xl font-bold text-white mt-3 drop-shadow-md">
-            {t("profileEditModal.title")}
-          </h2>
+          <div>
+            <p
+              className="
+                mb-1
+                text-xs
+                font-semibold
+                uppercase
+                tracking-[0.2em]
+                text-purple-400
+              "
+            >
+              Profile
+            </p>
+
+            <h2 className="text-2xl font-bold text-white sm:text-3xl">
+              {t("profileEditModal.title")}
+            </h2>
+          </div>
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="
+              flex
+              h-10
+              w-10
+              items-center
+              justify-center
+              rounded-xl
+              border
+              border-white/10
+              bg-white/5
+              text-gray-400
+              transition-all
+              duration-200
+              hover:border-purple-400/30
+              hover:bg-purple-500/10
+              hover:text-white
+            "
+          >
+            <X size={21} />
+          </button>
         </div>
-        <form onSubmit={handleSubmit} className="mt-2 space-y-4">
-          {field === 'photo' && (
-            <div className="flex flex-col items-center space-y-3">
+
+        {/* Form */}
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-5 p-6 sm:p-7"
+        >
+          {/* PHOTO */}
+          {field === "photo" && (
+            <div className="flex flex-col items-center">
               <div className="relative">
-                <img
-                  src={
-                    avatar
-                      ? URL.createObjectURL(avatar)
-                      : user?.profilePictureUrl
-                  }
-                  alt={t("profileEditModal.avatarAlt")}
-                  className="w-56 h-56 rounded-sm object-cover border-1 border-lime-500"
-                />
-                <label className="absolute bottom-0 right-0 bg-lime-500 text-black p-2 rounded-full cursor-pointer hover:bg-lime-600 transition">
-                  <ImageIcon size={18} />
+                {/* Avatar container */}
+                <div
+                  className="
+                    rounded-2xl
+                    border
+                    border-purple-400/20
+                    bg-gradient-to-br
+                    from-purple-600/20
+                    via-[#120D1D]
+                    to-violet-600/10
+                    p-1
+                    shadow-xl
+                    shadow-purple-950/30
+                  "
+                >
+                  {currentAvatar ? (
+                    <img
+                      src={currentAvatar}
+                      alt={t(
+                        "profileEditModal.avatarAlt"
+                      )}
+                      className="
+                        h-56
+                        w-56
+                        rounded-xl
+                        bg-[#090612]
+                        object-cover
+                      "
+                    />
+                  ) : (
+                    <div
+                      className="
+                        flex
+                        h-56
+                        w-56
+                        items-center
+                        justify-center
+                        rounded-xl
+                        bg-gradient-to-br
+                        from-purple-600
+                        to-violet-800
+                        text-5xl
+                        font-bold
+                      "
+                    >
+                      {user?.fullName
+                        ?.charAt(0)
+                        .toUpperCase() || "U"}
+                    </div>
+                  )}
+                </div>
+
+                {/* Upload */}
+                <label
+                  className="
+                    absolute
+                    bottom-3
+                    right-3
+                    flex
+                    h-11
+                    w-11
+                    cursor-pointer
+                    items-center
+                    justify-center
+                    rounded-xl
+                    border
+                    border-purple-300/30
+                    bg-gradient-to-br
+                    from-purple-600
+                    to-violet-600
+                    text-white
+                    shadow-lg
+                    shadow-purple-950/50
+                    transition-all
+                    duration-200
+                    hover:-translate-y-0.5
+                    hover:from-purple-500
+                    hover:to-violet-500
+                  "
+                >
+                  <ImageIcon size={19} />
+
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={(e) => setAvatar(e.target.files?.[0] || null)}
+                    onChange={(e) =>
+                      setAvatar(
+                        e.target.files?.[0] ||
+                          null
+                      )
+                    }
                     className="hidden"
                   />
                 </label>
               </div>
+
+              <p className="mt-4 text-sm text-gray-500">
+                Choose a new profile picture
+              </p>
             </div>
           )}
 
-          {field === 'fullName' && (
-            <div className="relative">
-              <User className="absolute top-4 left-3 text-gray-400" size={20} />
-              <input
-                type="text"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                placeholder={t("profileEditModal.namePlaceholder")}
-                className="w-full pl-10 pr-4 py-3 rounded-lg bg-[#191716] border-1 border-gray-600 text-white placeholder-gray-500 focus:ring-2 focus:ring-lime-500 outline-none transition"
-              />
+          {/* FULL NAME */}
+          {field === "fullName" && (
+            <div>
+              <label className="mb-2 block text-sm font-semibold text-gray-300">
+                {t("profile.overview.name")}
+              </label>
+
+              <div className="relative">
+                <User
+                  size={19}
+                  className="
+                    absolute
+                    left-3
+                    top-1/2
+                    -translate-y-1/2
+                    text-purple-400
+                  "
+                />
+
+                <input
+                  type="text"
+                  value={fullName}
+                  onChange={(e) =>
+                    setFullName(e.target.value)
+                  }
+                  placeholder={t(
+                    "profileEditModal.namePlaceholder"
+                  )}
+                  className="
+                    w-full
+                    rounded-xl
+                    border
+                    border-white/10
+                    bg-white/5
+                    py-3
+                    pl-11
+                    pr-4
+                    text-white
+                    placeholder-gray-500
+                    outline-none
+                    transition-all
+                    duration-200
+                    focus:border-purple-400/40
+                    focus:bg-purple-500/10
+                    focus:ring-2
+                    focus:ring-purple-500/10
+                  "
+                />
+              </div>
             </div>
           )}
 
-          {field === 'email' && (
-            <div className="relative">
-              <Mail className="absolute left-3 top-4 text-gray-400" size={20} />
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={t("profileEditModal.emailPlaceholder")}
-                className="w-full pl-10 pr-4 py-3 rounded-lg bg-[#191716] border-1 border-gray-600 text-white placeholder-gray-500 focus:ring-2 focus:ring-lime-500 outline-none transition"
-              />
+          {/* EMAIL */}
+          {field === "email" && (
+            <div>
+              <label className="mb-2 block text-sm font-semibold text-gray-300">
+                {t("profile.overview.email")}
+              </label>
+
+              <div className="relative">
+                <Mail
+                  size={19}
+                  className="
+                    absolute
+                    left-3
+                    top-1/2
+                    -translate-y-1/2
+                    text-purple-400
+                  "
+                />
+
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) =>
+                    setEmail(e.target.value)
+                  }
+                  placeholder={t(
+                    "profileEditModal.emailPlaceholder"
+                  )}
+                  className="
+                    w-full
+                    rounded-xl
+                    border
+                    border-white/10
+                    bg-white/5
+                    py-3
+                    pl-11
+                    pr-4
+                    text-white
+                    placeholder-gray-500
+                    outline-none
+                    transition-all
+                    duration-200
+                    focus:border-purple-400/40
+                    focus:bg-purple-500/10
+                    focus:ring-2
+                    focus:ring-purple-500/10
+                  "
+                />
+              </div>
             </div>
           )}
 
-          {field === 'password' && (
-            <div className="relative">
-              <Lock className="absolute left-3 top-4 text-gray-400" size={20} />
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder={t("profileEditModal.passwordPlaceholder")}
-                className="w-full pl-10 pr-4 py-3 rounded-lg bg-[#191716] border-1 border-gray-600 text-white placeholder-gray-500 focus:ring-2 focus:ring-lime-500 outline-none transition"
-              />
+          {/* PASSWORD */}
+          {field === "password" && (
+            <div>
+              <label className="mb-2 block text-sm font-semibold text-gray-300">
+                {t("profile.overview.password")}
+              </label>
+
+              <div className="relative">
+                <Lock
+                  size={19}
+                  className="
+                    absolute
+                    left-3
+                    top-1/2
+                    -translate-y-1/2
+                    text-purple-400
+                  "
+                />
+
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) =>
+                    setPassword(e.target.value)
+                  }
+                  placeholder={t(
+                    "profileEditModal.passwordPlaceholder"
+                  )}
+                  className="
+                    w-full
+                    rounded-xl
+                    border
+                    border-white/10
+                    bg-white/5
+                    py-3
+                    pl-11
+                    pr-4
+                    text-white
+                    placeholder-gray-500
+                    outline-none
+                    transition-all
+                    duration-200
+                    focus:border-purple-400/40
+                    focus:bg-purple-500/10
+                    focus:ring-2
+                    focus:ring-purple-500/10
+                  "
+                />
+              </div>
             </div>
           )}
 
-          <button
-            type="submit"
-            className="w-full py-2.5 bg-[#C4FF00] hover:bg-lime-600 text-black font-semibold rounded-lg text-xl transition duration-200 shadow-lime-500/30"
-          >
-            {t("profileEditModal.saveChanges")}
-          </button>
+          {/* Buttons */}
+          <div className="flex flex-col gap-3 pt-2 sm:flex-row-reverse">
+            <button
+              type="submit"
+              className="
+                w-full
+                rounded-xl
+                border
+                border-purple-400/20
+                bg-gradient-to-r
+                from-purple-600
+                to-violet-600
+                px-5
+                py-3
+                font-semibold
+                text-white
+                shadow-lg
+                shadow-purple-900/30
+                transition-all
+                duration-200
+                hover:-translate-y-0.5
+                hover:from-purple-500
+                hover:to-violet-500
+                focus:outline-none
+                focus:ring-2
+                focus:ring-purple-500/30
+                sm:flex-1
+              "
+            >
+              {t(
+                "profileEditModal.saveChanges"
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={onClose}
+              className="
+                w-full
+                rounded-xl
+                border
+                border-white/10
+                bg-white/5
+                px-5
+                py-3
+                font-semibold
+                text-gray-300
+                transition-all
+                duration-200
+                hover:border-white/20
+                hover:bg-white/10
+                hover:text-white
+                sm:flex-1
+              "
+            >
+              {t("common.cancel", {
+                defaultValue: "Cancel",
+              })}
+            </button>
+          </div>
         </form>
       </div>
     </div>
@@ -188,3 +566,4 @@ const ProfileEditModal = ({ isOpen, onClose, field, user }: ProfileEditModalProp
 };
 
 export default ProfileEditModal;
+
