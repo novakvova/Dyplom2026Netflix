@@ -45,12 +45,15 @@ const HeroBanner: React.FC<HeroBannerProps> = ({ onAboutClick }) => {
       className="relative h-[85vh] w-full bg-cover bg-center"
       style={{ backgroundImage: `url(${backdrop})` }}
     >
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D] via-[#0D0D0D]/90 to-transparent " />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#090612] via-[#090612]/90 to-transparent " />
+
+      {/* Purple glow, як на LoginPage */}
+      <div className="pointer-events-none absolute -left-20 bottom-10 h-[350px] w-[350px] rounded-full bg-purple-700/20 blur-[140px]" />
 
       <div className="absolute bottom-36 left-14 w-[750px] text-white ">
         <h1 className="text-7xl font-black
              text-white
-             drop-shadow-[1px_1px_1px_rgba(196,255,0,0.9)]
+             drop-shadow-[1px_1px_1px_rgba(139,92,246,0.9)]
              
              [text-shadow:0_0_10px_rgba(0,0,0,0.8)]">
           {movie.title || movie.original_title}
@@ -69,13 +72,13 @@ const HeroBanner: React.FC<HeroBannerProps> = ({ onAboutClick }) => {
                 }).unwrap();
                 navigate(`/movie/${movie.id}`);
               }}
-            className="bg-[#C4FF00] hover:bg-lime-600 text-black px-8 py-2 rounded-sm w-50 text-lg font-semibold transition"
+            className="bg-gradient-to-r from-purple-600 to-violet-500 hover:from-purple-500 hover:to-violet-400 text-white px-8 py-2 rounded-xl w-50 text-lg font-semibold shadow-[0_10px_30px_rgba(109,40,217,0.2)] hover:shadow-[0_10px_35px_rgba(139,92,246,0.3)] transition-all duration-200"
           >
             {t("heroBanner.watchButton")}
           </button>
           <button
             onClick={() => onAboutClick(movie)}
-            className="bg-[#D9D9D9]/30 hover:bg-[#D9D9D9]/50 text-white px-8 py-2 rounded-sm w-50 text-lg font-semibold transition"
+            className="bg-white/10 hover:bg-white/15 border border-white/10 text-white px-8 py-2 rounded-xl w-50 text-lg font-semibold transition backdrop-blur-sm"
           >
             {t("heroBanner.aboutButton")}
           </button>

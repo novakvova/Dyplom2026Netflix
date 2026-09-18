@@ -25,20 +25,24 @@ const MovieModal: React.FC<MovieModalProps> = ({ movie, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 animate-fadeIn">
-      <div className="bg-[#191716] rounded-lg max-w-2xl mx-auto w-full max-h-[90vh] relative shadow-2xl animate-slideInUp">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
+      <div className="bg-[#120D1D]/95 backdrop-blur-xl border border-white/10 rounded-2xl max-w-2xl mx-auto w-full max-h-[90vh] relative shadow-[0_25px_80px_rgba(0,0,0,0.55)] animate-slideInUp overflow-hidden">
+        {/* Purple background glow, як на LoginPage */}
+        <div className="pointer-events-none absolute -right-32 -top-10 h-[300px] w-[300px] rounded-full bg-purple-700/20 blur-[140px] z-0" />
+        <div className="pointer-events-none absolute -left-32 bottom-0 h-[300px] w-[300px] rounded-full bg-violet-600/15 blur-[140px] z-0" />
+
         <div className="relative w-full h-96">
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url(${IMG_BASE}${movie.backdrop_path})` }}
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-[#191716] via-transparent to-[#191716]" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#191716] to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#090612] via-transparent to-[#090612]" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#090612] to-transparent" />
           </div>
         </div>
 
         <button
-          className="absolute top-3 right-3 text-white text-3xl font-bold p-1 rounded-full transition z-50 hover:text-[#C4FF00]"
+          className="absolute top-3 right-3 text-white/70 text-xl p-2 rounded-full transition z-50 hover:bg-white/10 hover:text-white"
           onClick={onClose}
         >
           <FaTimes />
@@ -49,14 +53,14 @@ const MovieModal: React.FC<MovieModalProps> = ({ movie, onClose }) => {
             <img
               src={`${IMG_BASE}${movie.poster_path}`}
               alt={movie.title || movie.original_title}
-              className="w-24 md:w-40 rounded-lg shadow-lg border-2 border-[#C4FF00]"
+              className="w-24 md:w-40 rounded-lg shadow-lg border-2 border-purple-500/60"
             />
             <div className="flex-1 flex flex-col justify-between">
               <div>
                 <h3 className="text-2xl md:text-4xl font-bold text-white mb-2">
                   {movie.title || movie.original_title || "Unknown"}
                 </h3>
-                <div className="flex items-center gap-4 text-gray-400 text-sm">
+                <div className="flex items-center gap-4 text-purple-200/45 text-sm">
                   {movie.release_date && (
                     <span>{new Date(movie.release_date).getFullYear()}</span>
                   )}
@@ -66,21 +70,21 @@ const MovieModal: React.FC<MovieModalProps> = ({ movie, onClose }) => {
                     </svg>
                     {movie.vote_average.toFixed(1)}
                   </span>
-                  <span className="border border-gray-500 rounded-full px-2 py-0.5 text-xs text-white">
+                  <span className="border border-white/15 rounded-full px-2 py-0.5 text-xs text-white">
                     {movie.media_type || 'movie'}
                   </span>
                 </div>
               </div>
               <button
                 onClick={() => navigate(`/movie/${movie.id}`)}
-                className="bg-[#C4FF00] text-black px-6 py-3 rounded-lg hover:bg-lime-500 transition flex items-center justify-center gap-2 font-bold w-full mt-4 md:mt-0"
+                className="bg-gradient-to-r from-purple-600 to-violet-500 hover:from-purple-500 hover:to-violet-400 text-white px-6 py-3 rounded-xl shadow-[0_10px_30px_rgba(109,40,217,0.2)] hover:shadow-[0_10px_35px_rgba(139,92,246,0.3)] transition-all duration-200 flex items-center justify-center gap-2 font-bold w-full mt-4 md:mt-0"
               >
                 <FaPlay />
                 {t("heroBanner.watchButton")}
               </button>
             </div>
           </div>
-          <p className="text-gray-300 mb-6 text-sm md:text-base">
+          <p className="text-white/60 mb-6 text-sm md:text-base">
             {movie.overview || t("landingPage.noDescription")}
           </p>
         </div>
