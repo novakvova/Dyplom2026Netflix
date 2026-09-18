@@ -1,4 +1,6 @@
+
 import React, { useRef, useEffect, useState } from "react";
+
 import { useNavigate, Link } from "react-router-dom";
 import { useTranslation, Trans } from "react-i18next";
 
@@ -69,15 +71,15 @@ const LandingPage: React.FC = () => {
   }, [currentLanguage]);
 
   return (
-    <div className="min-h-screen overflow-hidden bg-[#090612] text-white">
+    <div className="min-h-screen overflow-hidden bg-[#090612] text-white selection:bg-purple-500/30">
       {/* HEADER */}
       <header className="absolute left-0 top-0 z-30 w-full">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 sm:px-8 lg:px-10">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8 lg:px-10">
           <Link to="/home">
             <img
               src={logo}
               alt="Logo"
-              className="w-28 md:w-36"
+              className="w-24 transition-transform duration-300 hover:scale-105 md:w-32"
             />
           </Link>
 
@@ -105,7 +107,7 @@ const LandingPage: React.FC = () => {
                 <Link to="/login">
                   <button
                     type="button"
-                    className="rounded-lg border border-purple-400/20 bg-purple-600/80 px-5 py-2.5 font-semibold text-white transition-all duration-200 hover:bg-purple-500 hover:shadow-[0_0_25px_rgba(139,92,246,0.35)]"
+                    className="rounded-full border border-white/10 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white backdrop-blur-xl transition-all duration-300 hover:border-purple-400/40 hover:bg-purple-600/80 hover:shadow-[0_0_25px_rgba(139,92,246,0.25)]"
                   >
                     {t("landingPage.login")}
                   </button>
@@ -136,14 +138,14 @@ const LandingPage: React.FC = () => {
 
         <div className="absolute -top-40 left-1/2 h-[500px] w-[700px] -translate-x-1/2 rounded-full bg-purple-700/20 blur-[160px]" />
 
-        <div className="relative z-10 max-w-4xl px-5 pt-20 text-center">
-          <div className="mb-6 inline-flex items-center rounded-full border border-purple-500/20 bg-purple-500/10 px-4 py-2 backdrop-blur-md">
+        <div className="relative z-10 max-w-5xl px-5 pt-16 text-center md:pt-20">
+          <div className="mb-7 inline-flex items-center rounded-full border border-purple-400/20 bg-white/5 px-5 py-2.5 shadow-[0_10px_40px_rgba(0,0,0,0.2)] backdrop-blur-xl">
             <span className="text-sm text-purple-200">
               {t("landingPage.popularNow")}
             </span>
           </div>
 
-          <h1 className="mb-6 text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+          <h1 className="mb-6 text-4xl font-extrabold leading-[1.05] tracking-[-0.03em] sm:text-5xl md:text-6xl lg:text-7xl">
             <Trans i18nKey="landingPage.heroTitle">
               Movies, series and lots of other content
               <br />
@@ -151,7 +153,7 @@ const LandingPage: React.FC = () => {
             </Trans>
           </h1>
 
-          <h2 className="mb-5 text-lg text-purple-100/80 sm:text-xl md:text-2xl">
+          <h2 className="mx-auto mb-5 max-w-3xl text-lg leading-relaxed text-purple-100/75 sm:text-xl md:text-2xl">
             <Trans i18nKey="landingPage.heroSubtitle">
               From{" "}
               <span className="font-bold text-purple-400">
@@ -167,13 +169,13 @@ const LandingPage: React.FC = () => {
                 {t("landingPage.heroText")}
               </p>
 
-              <div className="mx-auto flex max-w-2xl flex-col justify-center gap-3 sm:flex-row">
+              <div className="mx-auto flex max-w-2xl flex-col justify-center gap-3 rounded-2xl border border-white/10 bg-black/20 p-2 shadow-[0_20px_60px_rgba(0,0,0,0.25)] backdrop-blur-xl sm:flex-row">
                 <input
                   type="email"
                   placeholder={t("landingPage.emailPlaceholder")}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="h-14 flex-1 rounded-lg border border-purple-500/20 bg-[#120D1D]/90 px-5 text-white outline-none transition placeholder:text-purple-200/30 focus:border-purple-500/60 focus:ring-2 focus:ring-purple-500/10"
+                  className="h-12 flex-1 rounded-xl border border-white/10 bg-[#120D1D]/80 px-5 text-white outline-none transition placeholder:text-purple-200/30 focus:border-purple-500/60 focus:ring-2 focus:ring-purple-500/10 sm:h-14"
                 />
 
                 <button
@@ -183,7 +185,7 @@ const LandingPage: React.FC = () => {
                       state: { email },
                     })
                   }
-                  className="h-14 rounded-lg bg-gradient-to-r from-purple-600 to-violet-500 px-7 font-bold text-white transition-all duration-200 hover:from-purple-500 hover:to-violet-400 hover:shadow-[0_0_35px_rgba(139,92,246,0.35)] active:scale-[0.98]"
+                  className="h-12 rounded-xl bg-gradient-to-r from-purple-600 to-violet-500 px-7 font-bold text-white transition-all duration-300 hover:from-purple-500 hover:to-violet-400 hover:shadow-[0_0_35px_rgba(139,92,246,0.35)] active:scale-[0.98] sm:h-14"
                 >
                   {t("landingPage.startButton")}
                 </button>
@@ -199,15 +201,15 @@ const LandingPage: React.FC = () => {
       </div>
 
       {/* POPULAR MOVIES */}
-      <section className="relative bg-gradient-to-b from-[#090612] via-[#0D0914] to-[#090612] px-5 py-14 sm:px-8">
+      <section className="relative bg-[#090612] px-5 py-16 sm:px-8 md:py-20">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-8 flex items-center justify-between">
+          <div className="mb-10 flex items-end justify-between gap-5">
             <div>
-              <p className="mb-2 text-sm uppercase tracking-[0.2em] text-purple-400">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-purple-400">
                 {t("landingPage.popularNow")}
               </p>
 
-              <h2 className="text-3xl font-bold md:text-4xl">
+              <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
                 {t("landingPage.popularNow")}
               </h2>
             </div>
@@ -217,7 +219,7 @@ const LandingPage: React.FC = () => {
                 type="button"
                 onClick={() => scroll("left")}
                 aria-label="Scroll left"
-                className="flex h-11 w-11 items-center justify-center rounded-lg border border-purple-500/20 bg-purple-500/5 text-3xl text-purple-200 transition hover:border-purple-500/40 hover:bg-purple-500/15"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-2xl text-purple-200 backdrop-blur-md transition-all duration-300 hover:border-purple-500/40 hover:bg-purple-500/15 hover:text-white"
               >
                 ‹
               </button>
@@ -226,7 +228,7 @@ const LandingPage: React.FC = () => {
                 type="button"
                 onClick={() => scroll("right")}
                 aria-label="Scroll right"
-                className="flex h-11 w-11 items-center justify-center rounded-lg border border-purple-500/20 bg-purple-500/5 text-3xl text-purple-200 transition hover:border-purple-500/40 hover:bg-purple-500/15"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-2xl text-purple-200 backdrop-blur-md transition-all duration-300 hover:border-purple-500/40 hover:bg-purple-500/15 hover:text-white"
               >
                 ›
               </button>
@@ -235,7 +237,7 @@ const LandingPage: React.FC = () => {
 
           <div
             ref={scrollRef}
-            className="flex gap-5 overflow-x-auto overflow-y-visible px-5 py-6 scrollbar-hide scroll-smooth"
+            className="flex gap-6 overflow-x-auto overflow-y-visible px-2 py-8 scrollbar-hide scroll-smooth md:gap-7"
           >
             {movies.map((movie, index) => (
               <div
@@ -248,17 +250,17 @@ const LandingPage: React.FC = () => {
                     setSelectedMovie(movie);
                   }
                 }}
-                className="group relative min-w-[180px] flex-shrink-0 cursor-pointer transition-all duration-500 hover:scale-[1.04] sm:min-w-[210px] md:min-w-[230px]"
+                className="group relative min-w-[170px] flex-shrink-0 cursor-pointer transition-all duration-500 hover:-translate-y-2 sm:min-w-[200px] md:min-w-[220px]"
               >
                 <div className="absolute -left-5 -top-10 z-20 text-[110px] font-black leading-none text-transparent drop-shadow-[0_0_15px_rgba(139,92,246,0.2)] [-webkit-text-stroke:2px_rgba(139,92,246,0.65)] sm:text-[140px]">
                   {index + 1}
                 </div>
 
-                <div className="relative overflow-hidden rounded-xl border border-purple-500/10 bg-[#120D1D] shadow-[0_15px_40px_rgba(0,0,0,0.4)] transition-all duration-500 group-hover:border-purple-500/30 group-hover:shadow-[0_20px_50px_rgba(88,28,135,0.25)]">
+                <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#120D1D] shadow-[0_18px_45px_rgba(0,0,0,0.45)] transition-all duration-500 group-hover:border-purple-500/35 group-hover:shadow-[0_25px_60px_rgba(88,28,135,0.28)]">
                   <img
                     src={`${IMG_BASE}${movie.poster_path}`}
                     alt={movie.title || movie.original_title}
-                    className="h-[280px] w-full object-cover transition-transform duration-700 group-hover:scale-105 sm:h-[320px] md:h-[350px]"
+                    className="h-[270px] w-full object-cover transition-transform duration-700 group-hover:scale-110 sm:h-[310px] md:h-[335px]"
                   />
 
                   <div className="absolute inset-0 bg-gradient-to-t from-[#090612] via-transparent to-transparent opacity-60" />
@@ -384,15 +386,15 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* REASONS */}
-      <section className="relative bg-gradient-to-b from-[#090612] via-[#0D0914] to-[#090612] px-5 py-20 sm:px-8">
+      <section className="relative bg-[#090612] px-5 py-20 sm:px-8">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-10">
+          <div className="mb-12">
             <h2 className="text-3xl font-bold text-white md:text-4xl">
               {t("landingPage.moreReasons")}
             </h2>
           </div>
 
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <ReasonCard
               icon={<GiFilmProjector />}
               title={t("landingPage.reasons.tv.title")}
@@ -421,9 +423,9 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* FAQ */}
-      <section className="bg-[#090612] px-5 py-20 sm:px-8">
+      <section className="bg-[#090612] px-5 py-20 sm:px-8 md:py-24">
         <div className="mx-auto max-w-5xl">
-          <div className="mb-10">
+          <div className="mb-12">
             <h2 className="text-3xl font-bold text-white md:text-4xl">
               {t("landingPage.faq.title")}
             </h2>
@@ -473,8 +475,8 @@ const ReasonCard: React.FC<ReasonCardProps> = ({
   subtitle,
 }) => {
   return (
-    <div className="group relative flex min-h-[250px] flex-col items-center justify-center overflow-hidden rounded-2xl border border-purple-500/15 bg-gradient-to-br from-[#120D1D] via-[#160F20] to-[#0F0A17] p-7 text-center shadow-[0_20px_50px_rgba(0,0,0,0.25)] transition-all duration-300 hover:-translate-y-1 hover:border-purple-500/35 hover:shadow-[0_20px_60px_rgba(88,28,135,0.2)]">
-      <div className="relative z-10 mb-5 text-5xl text-purple-400">
+    <div className="group relative flex min-h-[230px] flex-col items-center justify-center overflow-hidden rounded-3xl border border-white/10 bg-white/[0.035] p-7 text-center shadow-[0_20px_50px_rgba(0,0,0,0.25)] backdrop-blur-sm transition-all duration-500 hover:-translate-y-1.5 hover:border-purple-500/30 hover:bg-white/[0.055] hover:shadow-[0_25px_60px_rgba(88,28,135,0.2)]">
+      <div className="relative z-10 mb-5 text-5xl text-purple-400 transition-transform duration-500 group-hover:scale-110">
         {icon}
       </div>
 

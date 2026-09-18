@@ -48,17 +48,17 @@ const Top10Row = ({ title, fetcher, languageCode }: { title: string; fetcher: (p
   return (
     <div className="relative p-4 mb-10">
       <div className="flex justify-between items-center mb-3">
-        <h2 className="font-bold mb-4 text-3xl text-left">{title}</h2>
+        <h2 className="font-bold mb-4 text-3xl text-left text-white">{title}</h2>
        <div className="flex gap-1 mr-5">
           <button
             onClick={() => scroll('left')}
-            className="w-8 h-12 text-white flex items-center justify-center rounded-md hover:bg-opacity-75 transition-colors duration-200"
+            className="w-8 h-12 text-white/60 flex items-center justify-center rounded-lg transition-colors duration-200 hover:bg-white/5 hover:text-white"
           >
             <span className="text-5xl font-regular">‹</span>
           </button>
           <button
             onClick={() => scroll('right')}
-            className="w-8 h-12 text-white flex items-center justify-center rounded-md hover:bg-opacity-75 transition-colors duration-200"
+            className="w-8 h-12 text-white/60 flex items-center justify-center rounded-lg transition-colors duration-200 hover:bg-white/5 hover:text-white"
           >
             <span className="text-5xl font-regular">›</span>
           </button>
@@ -71,8 +71,8 @@ const Top10Row = ({ title, fetcher, languageCode }: { title: string; fetcher: (p
             <span
               className="absolute -left-24 -top-24 z-0 text-big font-black
                 text-[#0d0d0d]
-                drop-shadow-[1px_1px_1px_rgba(196,255,0,0.9)]
-                [-webkit-text-stroke:8px_#C4FF00]
+                drop-shadow-[1px_1px_1px_rgba(139,92,246,0.9)]
+                [-webkit-text-stroke:8px_#8B5CF6]
                 [text-shadow:_0_0_px_black,0_0_10px_rgba(0,0,0,0.8)]"
             >
               {index + 1}
@@ -127,10 +127,15 @@ const HomePage = () => {
     navigate("/login");
   };
   return (
-    <div className="bg-black/95 text-white overflow-x-auto scrollbar-hide">
-      
+    <div
+      className="relative min-h-screen overflow-x-auto text-white scrollbar-hide bg-[#090612]"
+    >
+      {/* Purple background glow, як на LoginPage */}
+      <div className="pointer-events-none fixed -left-40 top-40 h-[400px] w-[400px] rounded-full bg-purple-700/15 blur-[140px]" />
+      <div className="pointer-events-none fixed -right-40 top-[900px] h-[400px] w-[400px] rounded-full bg-violet-600/10 blur-[140px]" />
+
       <Header />
-      <div className="mt-20">
+      <div className="relative z-10 mt-20">
         <HeroBanner onAboutClick={handleOpenModal} /> 
 
         <section className="px-2">

@@ -22,15 +22,15 @@ const ChangePasswordRequest = ({ email }: Props) => {
 
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-sm text-gray-400">
+      <p className="text-sm text-purple-200/45">
         To change your password, an email with a link will be sent to your address{" "}
-        <span className="text-lime-400">{email}</span>.
+        <span className="text-purple-300 font-medium">{email}</span>.
       </p>
 
       <button
         onClick={handleSend}
         disabled={isLoading || status === "sent"}
-        className="px-4 py-2 bg-lime-500 hover:bg-lime-600 text-black font-semibold rounded-sm transition disabled:opacity-50 disabled:cursor-not-allowed"
+        className="px-4 py-2 bg-gradient-to-r from-purple-600 to-violet-500 hover:from-purple-500 hover:to-violet-400 text-white font-semibold rounded-xl shadow-[0_10px_30px_rgba(109,40,217,0.2)] hover:shadow-[0_10px_35px_rgba(139,92,246,0.3)] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isLoading ? "Sending..." : status === "sent" ? "Email sent ✅" : "Change password"}
       </button>
