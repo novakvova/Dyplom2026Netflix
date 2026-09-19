@@ -16,7 +16,6 @@ interface MediaGridProps {
 
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
-
 const MediaGrid = ({ title, fetchData, genres }: MediaGridProps) => {
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,7 +37,6 @@ const MediaGrid = ({ title, fetchData, genres }: MediaGridProps) => {
     try {
       setLoading(true);
       const data = await fetchData(pageNum, filters);
-      console.log("Filters inside MediaGrid:", filters);
       setItems((prev) => (reset ? data.results : [...prev, ...data.results]));
       setPage(pageNum);
     } catch (err: any) {
@@ -52,7 +50,7 @@ const MediaGrid = ({ title, fetchData, genres }: MediaGridProps) => {
     return genreIds
       ?.map((id) => genres.find((g) => g.id === id)?.name)
       .filter(Boolean)
-      .slice(0, 3); 
+      .slice(0, 3);
   };
 
   const handlePlay = async (id: number, name: string) => {
@@ -70,7 +68,6 @@ const MediaGrid = ({ title, fetchData, genres }: MediaGridProps) => {
       const payload = { contentId: id, contentType: "movie" };
       await AddForLater(payload).unwrap();
       toast.success("Added to 'Watch Later' list");
-      console.log("➕ Added to list:", id);
     } catch (err: any) {
       if (err?.status === 409) {
         toast.info(t("mediaGrid.alreadyInWatchLater"));
@@ -85,7 +82,6 @@ const MediaGrid = ({ title, fetchData, genres }: MediaGridProps) => {
       const payload = { contentId: id, contentType: "movie" };
       await addFavorite(payload).unwrap();
       toast.success("Added to favorites 👍");
-      console.log("➕ Added to favorites:", id);
     } catch (err: any) {
       if (err?.status === 409) {
         toast.info(t("mediaGrid.alreadyInWatchLater"));
@@ -102,14 +98,17 @@ const MediaGrid = ({ title, fetchData, genres }: MediaGridProps) => {
   if (error) return <p className="text-red-500 text-center">{error}</p>;
 
   return (
-    <div className="px-8 py-10 max-w-[1600px] mx-auto">
-      <h2 className="text-2xl font-bold text-white mb-6">{title}</h2>
+    <div>
+      <div className="mb-7">
+        <h2 className="text-2xl md:text-3xl font-bold text-white">{title}</h2>
+        <div className="mt-3 h-px w-full bg-gradient-to-r from-purple-500/60 via-violet-500/20 to-transparent" />
+      </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
         {items.map((item) => (
           <div
             key={item.id}
-            className="relative group cursor-pointer rounded-lg overflow-hidden bg-black"
+            className="relative group cursor-pointer rounded-xl overflow-hidden border border-white/10 bg-[#120D1D] hover:border-purple-500/50 transition-colors aspect-[2/3]"
           >
             <img
               src={
@@ -121,7 +120,7 @@ const MediaGrid = ({ title, fetchData, genres }: MediaGridProps) => {
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
             />
 
-            <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out bg-black/90 p-3 rounded-t-lg">
+            <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out bg-[#090612]/95 backdrop-blur-sm p-3 rounded-t-lg border-t border-white/10">
               <div className="flex items-center gap-3 mb-3">
                 <button
                   onClick={() => handlePlay(item.id, item.title)}
@@ -131,27 +130,27 @@ const MediaGrid = ({ title, fetchData, genres }: MediaGridProps) => {
                 </button>
                 <button
                   onClick={() => handleAdd(item.id)}
-                  className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                  className="border border-white/30 rounded-full p-2 text-white hover:border-purple-400 hover:text-purple-300 transition"
                 >
                   <Plus size={18} />
                 </button>
                 <button
                   onClick={() => handleLike(item.id)}
-                  className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                  className="border border-white/30 rounded-full p-2 text-white hover:border-purple-400 hover:text-purple-300 transition"
                 >
                   <ThumbsUp size={18} />
                 </button>
                 <button
                   onClick={() => handleExpand(item.id)}
-                  className="ml-auto border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                  className="ml-auto border border-white/30 rounded-full p-2 text-white hover:border-purple-400 hover:text-purple-300 transition"
                 >
                   <ChevronDown size={18} />
                 </button>
               </div>
 
               <div className="flex flex-wrap gap-2 text-xs text-gray-300">
-                <span className="px-2 py-0.5 border border-gray-500 rounded">HD</span>
-                <span className="px-2 py-0.5 border border-gray-500 rounded">6+</span>
+                <span className="px-2 py-0.5 border border-white/20 rounded">HD</span>
+                <span className="px-2 py-0.5 border border-white/20 rounded">6+</span>
                 {getGenres(item.genre_ids)?.map((g, idx) => (
                   <span key={idx}>{g}</span>
                 ))}
@@ -167,7 +166,7 @@ const MediaGrid = ({ title, fetchData, genres }: MediaGridProps) => {
         ) : (
           <button
             onClick={() => loadData(page + 1)}
-            className="px-6 py-2 bg-white text-black font-semibold rounded-lg shadow hover:bg-gray-200 transition"
+            className="px-6 py-2 bg-gradient-to-r from-purple-600 to-violet-500 text-white font-semibold rounded-lg shadow hover:opacity-90 transition"
           >
             Load More
           </button>

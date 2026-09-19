@@ -1,3 +1,4 @@
+
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import MediaGrid from "../../components/MediaGrid";
@@ -17,49 +18,92 @@ export default function MoviesPage() {
   const currentLanguage = i18n.language;
 
   useEffect(() => {
-    getMovieGenres(1, currentLanguage).then(
-      (data) => setGenres(data.genres)
-    );
+    const loadGenres = async () => {
+      try {
+        const data = await getMovieGenres(1, currentLanguage);
+
+        if (data?.genres) {
+          setGenres(data.genres);
+        }
+      } catch (error) {
+        console.error("Failed to load movie genres:", error);
+      }
+    };
+
+    loadGenres();
   }, [currentLanguage]);
 
   return (
-    <div className="min-h-screen bg-[#090612] text-white relative overflow-hidden">
-      {/* Background glow */}
-      <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-purple-700/15 blur-3xl pointer-events-none" />
+    <div className="relative min-h-screen overflow-hidden bg-[#090612] text-white">
+      {/* ================= BACKGROUND GLOW ================= */}
 
-      <div className="absolute top-[40%] -right-40 w-[500px] h-[500px] rounded-full bg-violet-600/10 blur-3xl pointer-events-none" />
+      <div className="pointer-events-none absolute -left-40 -top-40 h-[500px] w-[500px] rounded-full bg-purple-700/20 blur-[140px]" />
 
-      <div className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full bg-purple-700/10 blur-3xl pointer-events-none" />
+      <div className="pointer-events-none absolute -right-40 top-[35%] h-[500px] w-[500px] rounded-full bg-violet-600/15 blur-[140px]" />
 
-      <div className="relative z-20">
+      <div className="pointer-events-none absolute -bottom-40 left-[20%] h-[450px] w-[450px] rounded-full bg-purple-700/10 blur-[140px]" />
+
+      {/* ================= HEADER ================= */}
+
+      <div className="relative z-30">
         <Header />
       </div>
 
-      <main className="relative z-10 pt-24 pb-12">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-10">
-          <div className="mb-7">
-            <h1 className="text-2xl md:text-3xl font-bold">
-              Топ фільми
-            </h1>
+      {/* ================= MAIN ================= */}
 
-            <div className="mt-3 h-px w-full bg-gradient-to-r from-purple-500/60 via-violet-500/20 to-transparent" />
+      <main className="relative z-10 px-4 pb-16 pt-24 sm:px-6 lg:px-10">
+        <div className="mx-auto w-full max-w-7xl">
+
+          {/* PAGE HEADER */}
+
+          <div className="mb-8">
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-purple-400/70">
+                  Movies
+                </p>
+
+                <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+                  Топ фільми
+                </h1>
+
+                <p className="mt-2 max-w-xl text-sm text-white/40">
+                  Переглядайте найпопулярніші та найкращі фільми.
+                </p>
+              </div>
+            </div>
+
+            {/* Gradient line */}
+
+            <div className="mt-6 h-px w-full bg-gradient-to-r from-purple-500/70 via-violet-500/30 to-transparent" />
           </div>
 
-          <div className="rounded-xl border border-white/10 bg-[#120D1D] p-4 md:p-6">
-            <MediaGrid
-              title="Популярні фільми"
-              fetchData={(page, filters) =>
-                getTopRatedMovies(
-                  page ?? 1,
-                  currentLanguage,
-                  filters
-                )
-              }
-              genres={genres}
-            />
-          </div>
+          {/* ================= MOVIES CARD ================= */}
+
+          <section className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#120D1D]/90 p-4 shadow-[0_25px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:p-6">
+
+            {/* Card glow */}
+
+            <div className="pointer-events-none absolute -right-24 -top-24 h-56 w-56 rounded-full bg-purple-600/10 blur-[90px]" />
+
+            <div className="relative z-10">
+              <MediaGrid
+                title="Популярні фільми"
+                fetchData={(page, filters) =>
+                  getTopRatedMovies(
+                    page ?? 1,
+                    currentLanguage,
+                    filters
+                  )
+                }
+                genres={genres}
+              />
+            </div>
+          </section>
         </div>
       </main>
+
+      {/* ================= FOOTER ================= */}
 
       <div className="relative z-10">
         <Footer />
@@ -67,5 +111,3 @@ export default function MoviesPage() {
     </div>
   );
 }
-
-
