@@ -1,55 +1,76 @@
 
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { LogOut } from 'lucide-react'; 
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { LogOut } from "lucide-react";
 
 interface LogoutConfirmModalProps {
-  isOpen: boolean; 
-  onClose: () => void; 
-  onConfirm: () => void; 
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
 }
 
-const LogoutConfirmModal: React.FC<LogoutConfirmModalProps> = ({ isOpen, onClose, onConfirm }) => {
+const LogoutConfirmModal: React.FC<LogoutConfirmModalProps> = ({
+  isOpen,
+  onClose,
+  onConfirm,
+}) => {
   const { t } = useTranslation();
 
   if (!isOpen) return null;
 
-  const LIME_COLOR_TAILWIND = "lime-400"; 
-  const RED_COLOR_TAILWIND = "red-600"; 
-
   return (
-    <div 
-      className="fixed inset-0 bg-black/70 flex items-center justify-center z-[9999] p-4 backdrop-blur-sm"
-      onClick={onClose} 
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#090612]/80 px-5 py-6 backdrop-blur-md"
+      onClick={onClose}
     >
-      <div 
-        
-        className={`bg-[#191716] rounded-xl max-w-sm mx-auto w-full p-8 relative shadow-2xl border-2 border-${LIME_COLOR_TAILWIND}`}
-        onClick={(e) => e.stopPropagation()} 
+      {/* Purple glow */}
+      <div className="pointer-events-none absolute h-[350px] w-[350px] rounded-full bg-purple-700/20 blur-[140px]" />
+
+      <div
+        className="relative w-full max-w-md overflow-hidden rounded-2xl border border-white/10 bg-[#120D1D]/95 p-6 shadow-[0_25px_80px_rgba(0,0,0,0.65)] backdrop-blur-xl sm:p-8"
+        onClick={(e) => e.stopPropagation()}
       >
-        
-        <div className="flex flex-col items-center justify-center text-center">
-            <LogOut size={48} className={`text-${LIME_COLOR_TAILWIND} mb-4`} />
-            
-            <p className="text-gray-200 text-xl font-medium mb-8">
-              {t("profile.LogOutModal.message") || "Ви впевнені, що хочете вийти зі свого облікового запису?"}
-            </p>
+        {/* Top purple glow */}
+        <div className="pointer-events-none absolute -top-24 left-1/2 h-40 w-40 -translate-x-1/2 rounded-full bg-purple-600/20 blur-[70px]" />
+
+        <div className="relative flex flex-col items-center text-center">
+          {/* Icon */}
+          <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-purple-500/20 bg-purple-500/10">
+            <LogOut
+              size={30}
+              strokeWidth={1.8}
+              className="text-purple-400"
+            />
+          </div>
+
+          {/* Title */}
+          <h2 className="text-2xl font-bold tracking-tight text-white">
+            {t("profile.LogOutModal.title") || "Sign out"}
+          </h2>
+
+          {/* Message */}
+          <p className="mt-3 max-w-sm text-sm leading-6 text-white/45">
+            {t("profile.LogOutModal.message") ||
+              "Are you sure you want to sign out of your account?"}
+          </p>
         </div>
 
-        <div className="flex justify-center gap-4 items-center">
-          
+        {/* Buttons */}
+        <div className="relative mt-7 flex gap-3">
           <button
-            onClick={onClose} 
-            className={`flex-1 text-white border border-${LIME_COLOR_TAILWIND} px-4 py-3 rounded-md hover:bg-gray-700 transition font-semibold`}
+            type="button"
+            onClick={onClose}
+            className="h-12 flex-1 rounded-xl border border-white/10 bg-white/5 px-4 text-sm font-semibold text-white/80 transition-all duration-200 hover:border-white/15 hover:bg-white/10 hover:text-white"
           >
-            {t("profile.LogOutModal.cancel") || "Скасувати"}
+            {t("profile.LogOutModal.cancel") || "Cancel"}
           </button>
-          
+
           <button
-            onClick={onConfirm} 
-            className={`flex-1 bg-${RED_COLOR_TAILWIND} text-white px-4 py-3 rounded-md hover:bg-red-700 transition font-semibold`}
+            type="button"
+            onClick={onConfirm}
+            className="h-12 flex-1 rounded-xl bg-gradient-to-r from-purple-600 to-violet-500 px-4 text-sm font-bold text-white shadow-[0_10px_30px_rgba(109,40,217,0.2)] transition-all duration-200 hover:from-purple-500 hover:to-violet-400 hover:shadow-[0_10px_35px_rgba(139,92,246,0.3)]"
           >
-            {t("profile.LogOutModal.confirmLogout") || "Вийти"}
+            {t("profile.LogOutModal.confirmLogout") || "Sign out"}
           </button>
         </div>
       </div>
