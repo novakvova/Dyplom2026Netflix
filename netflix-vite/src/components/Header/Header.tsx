@@ -62,7 +62,7 @@ const Header = () => {
     { path: "/tvseries", label: t("menu.tvseries") },
     { path: "/anime", label: t("menu.anime") },
     { path: "/cartoons", label: t("menu.cartoons") },
-    { path: "/newandpopular", label: t("menu.newAndPopular") },
+    {/* { path: "/newandpopular", label: t("menu.newAndPopular") },*/}
   ];
 
   return (
