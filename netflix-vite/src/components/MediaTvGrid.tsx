@@ -11,8 +11,14 @@ import { useAddToHistoryMutation } from "../services/historyApi";
 interface MediaGridProps {
   titleKey: string;
 
-  
-  fetchData: (page?: number, filters?: { ratingFrom: number; ratingTo: number; genres: number[] }) => Promise<any>;
+  fetchData: (
+    page?: number,
+    filters?: {
+      ratingFrom: number;
+      ratingTo: number;
+      genres: number[];
+    }
+  ) => Promise<any>;
 
   genres: { id: number; name: string }[];
 }
@@ -21,14 +27,17 @@ const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
 const MediaGrid = ({ titleKey, fetchData, genres }: MediaGridProps) => {
   const { t } = useTranslation();
+
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [page, setPage] = useState(1);
+
   const [addFavorite] = useAddFavoriteMutation();
   const [AddForLater] = useAddForLaterMutation();
-  const { filters } = useFilters();
   const [addToHistory] = useAddToHistoryMutation();
+
+  const { filters } = useFilters();
 
   const navigate = useNavigate();
 
@@ -39,10 +48,18 @@ const MediaGrid = ({ titleKey, fetchData, genres }: MediaGridProps) => {
   const loadData = async (pageNum: number, reset = false) => {
     try {
       setLoading(true);
+
       const data = await fetchData(pageNum, filters);
-      setItems((prev) => (reset ? data.results : [...prev, ...data.results]));
+
+      setItems((prev) =>
+        reset
+          ? data.results
+          : [...prev, ...data.results]
+      );
+
       setPage(pageNum);
     } catch (err: any) {
+      console.error("Error loading data:", err);
       setError(t("mediaGrid.errorLoadingData"));
     } finally {
       setLoading(false);
@@ -51,47 +68,77 @@ const MediaGrid = ({ titleKey, fetchData, genres }: MediaGridProps) => {
 
   const getGenres = (genreIds: number[]) => {
     return genreIds
-      ?.map((id) => genres.find((g) => g.id === id)?.name)
+      ?.map((id) =>
+        genres.find((g) => g.id === id)?.name
+      )
       .filter(Boolean)
       .slice(0, 3);
   };
 
- const handlePlay = async (id: number, name: string) => {
+  const handlePlay = async (
+    id: number,
+    name: string
+  ) => {
     await addToHistory({
       id: id,
       mediaType: "tv",
       name: name,
     }).unwrap();
+
     navigate(`/tv/${id}`);
     window.location.reload();
   };
 
   const handleAdd = async (id: number) => {
     try {
-      const payload = { contentId: id, contentType: "tv" };
+      const payload = {
+        contentId: id,
+        contentType: "tv",
+      };
+
       await AddForLater(payload).unwrap();
-      toast.success(t("mediaGrid.addToWatchLaterSuccess"));
+
+      toast.success(
+        t("mediaGrid.addToWatchLaterSuccess")
+      );
+
       console.log("➕ Added to list:", id);
     } catch (err: any) {
       if (err?.status === 409) {
-        toast.info(t("mediaGrid.alreadyInWatchLater")); // 👈 нове повідомлення
+        toast.info(
+          t("mediaGrid.alreadyInWatchLater")
+        );
       } else {
-        toast.error(t("mediaGrid.addToWatchLaterError"));
+        toast.error(
+          t("mediaGrid.addToWatchLaterError")
+        );
       }
     }
   };
 
   const handleLike = async (id: number) => {
     try {
-      const payload = { contentId: id, contentType: "tv" };
+      const payload = {
+        contentId: id,
+        contentType: "tv",
+      };
+
       await addFavorite(payload).unwrap();
-      toast.success(t("mediaGrid.addToFavoritesSuccess"));
+
+      toast.success(
+        t("mediaGrid.addToFavoritesSuccess")
+      );
+
       console.log("➕ Added to favorites:", id);
     } catch (err: any) {
       if (err?.status === 409) {
-        toast.info(t("mediaGrid.alreadyInWatchLater")); // 👈 нове повідомлення
+        toast.info(
+          t("mediaGrid.alreadyInWatchLater")
+        );
       } else {
-        toast.error(t("mediaGrid.addToWatchLaterError"));
+        toast.error(
+          t("mediaGrid.addToWatchLaterError")
+        );
       }
     }
   };
@@ -100,86 +147,183 @@ const MediaGrid = ({ titleKey, fetchData, genres }: MediaGridProps) => {
     console.log("🔽 Expand details:", id);
   };
 
-  if (error) return <p className="text-red-500 text-center">{error}</p>;
+  if (error) {
+    return (
+      <p className="text-red-500 text-center">
+        {error}
+      </p>
+    );
+  }
 
   return (
     <div className="px-8 py-10 max-w-[1600px] mx-auto">
-      <h2 className="text-2xl font-bold text-white mb-6">{t(titleKey)}</h2>
+
+      <h2 className="text-2xl font-bold text-white mb-6">
+        {t(titleKey)}
+      </h2>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+
         {items.map((item) => (
+
           <div
             key={item.id}
             className="relative group cursor-pointer rounded-lg overflow-hidden bg-black"
           >
-            <img
-              src={
-                item.poster_path
-                  ? `${IMAGE_BASE_URL}${item.poster_path}`
-                  : "/no-poster.png"
-              }
-              alt={item.title || item.name}
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-            />
+
+            {/* POSTER */}
+
+            <div className="relative w-full h-full">
+
+              <img
+                src={
+                  item.poster_path
+                    ? `${IMAGE_BASE_URL}${item.poster_path}`
+                    : "/no-poster.png"
+                }
+                alt={item.title || item.name}
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+              />
+
+              {/* RATING */}
+
+              <div className="absolute top-2 right-2 z-10 rounded-md bg-black/80 px-2 py-1 text-sm font-semibold text-yellow-400 backdrop-blur-sm">
+                ⭐{" "}
+                {item.vote_average != null
+                  ? Number(item.vote_average).toFixed(1)
+                  : "—"}
+              </div>
+
+            </div>
+
+            {/* HOVER WINDOW */}
 
             <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out bg-black/90 p-3 rounded-t-lg">
+
               <div className="flex items-center gap-3 mb-3">
+
+                {/* PLAY */}
+
                 <button
-                  onClick={() => handlePlay(item.id, item.name)}
+                  onClick={() =>
+                    handlePlay(
+                      item.id,
+                      item.name || item.title
+                    )
+                  }
                   className="bg-white text-black rounded-full p-2 hover:scale-110 transition"
                   aria-label={t("mediaGrid.playButton")}
                 >
                   <Play size={18} />
                 </button>
+
+                {/* ADD */}
+
                 <button
-                  onClick={() => handleAdd(item.id)}
+                  onClick={() =>
+                    handleAdd(item.id)
+                  }
                   className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
                   aria-label={t("mediaGrid.addButton")}
                 >
                   <Plus size={18} />
                 </button>
+
+                {/* LIKE */}
+
                 <button
-                  onClick={() => handleLike(item.id)}
+                  onClick={() =>
+                    handleLike(item.id)
+                  }
                   className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
                   aria-label={t("mediaGrid.likeButton")}
                 >
                   <ThumbsUp size={18} />
                 </button>
+
+                {/* EXPAND */}
+
                 <button
-                  onClick={() => handleExpand(item.id)}
+                  onClick={() =>
+                    handleExpand(item.id)
+                  }
                   className="ml-auto border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
                   aria-label={t("mediaGrid.expandButton")}
                 >
                   <ChevronDown size={18} />
                 </button>
+
               </div>
+
+              {/* INFO */}
 
               <div className="flex flex-wrap gap-2 text-xs text-gray-300">
-                <span className="px-2 py-0.5 border border-gray-500 rounded">HD</span>
-                <span className="px-2 py-0.5 border border-gray-500 rounded">6+</span>
-                {getGenres(item.genre_ids)?.map((g, idx) => (
-                  <span key={idx}>{g}</span>
-                ))}
+
+                <span className="px-2 py-0.5 border border-gray-500 rounded">
+                  HD
+                </span>
+
+                <span className="px-2 py-0.5 border border-gray-500 rounded">
+                  6+
+                </span>
+
+                {/* RATING INSIDE HOVER */}
+
+                <span className="px-2 py-0.5 border border-yellow-500/40 rounded text-yellow-400">
+                  ⭐{" "}
+                  {item.vote_average != null
+                    ? Number(item.vote_average).toFixed(1)
+                    : "—"}
+                </span>
+
+                {/* GENRES */}
+
+                {getGenres(item.genre_ids)?.map(
+                  (g, idx) => (
+                    <span key={idx}>
+                      {g}
+                    </span>
+                  )
+                )}
+
               </div>
+
             </div>
+
           </div>
+
         ))}
+
       </div>
 
+      {/* LOAD MORE */}
+
       <div className="flex justify-center mt-8">
+
         {loading ? (
-          <p className="text-gray-400">{t("mediaGrid.loading")}</p>
+
+          <p className="text-gray-400">
+            {t("mediaGrid.loading")}
+          </p>
+
         ) : (
+
           <button
-            onClick={() => loadData(page + 1)}
+            onClick={() =>
+              loadData(page + 1)
+            }
             className="px-6 py-2 bg-white text-black font-semibold rounded-lg shadow hover:bg-gray-200 transition"
           >
             {t("mediaGrid.loadMoreButton")}
           </button>
+
         )}
+
       </div>
+
     </div>
   );
 };
 
 export default MediaGrid;
+
