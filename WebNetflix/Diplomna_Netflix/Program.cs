@@ -120,7 +120,7 @@ builder.Services.AddControllers()
     {
         fv.RegisterValidatorsFromAssemblyContaining<RegisterDtoValidator>();
         fv.RegisterValidatorsFromAssemblyContaining<SubscriptionCreateValidator>();
-        
+
     });
 
 builder.Services.AddCors(options =>
@@ -134,7 +134,6 @@ builder.Services.AddCors(options =>
     });
 });
 // Controllers, Swagger
-builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
 builder.Services.AddSwaggerJWT();

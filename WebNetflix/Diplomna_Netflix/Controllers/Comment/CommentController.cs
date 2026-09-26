@@ -44,7 +44,8 @@ public class CommentController : ControllerBase
     public async Task<IActionResult> DeleteComment(Guid commentId)
     {
         var result = await _commentService.DeleteCommentAsync(commentId);
-        return result ? Ok("Comment deleted") : NotFound("Comment not found");
+
+        return result ? NoContent() : NotFound(new { message = "Comment not found" });
     }
 
 }
