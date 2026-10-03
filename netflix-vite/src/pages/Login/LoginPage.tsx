@@ -215,7 +215,7 @@ const LoginPage = () => {
           {/* REGISTER */}
           <div className="mt-7 border-t border-white/5 pt-5 text-center">
             <p className="text-sm text-white/40">
-              New to Bingatch?{" "}
+              New to Teflecs?{" "}
               <button
                 type="button"
                 onClick={() => navigate("/register")}

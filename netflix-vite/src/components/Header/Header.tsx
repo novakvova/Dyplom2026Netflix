@@ -1,192 +1,548 @@
+
 // src/components/Header.tsx
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useState, useEffect, useRef, type FormEvent } from "react";
-import { Search, SlidersHorizontal } from "lucide-react";
+
+import {
+  Link,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+
+import {
+  useState,
+  useEffect,
+  useRef,
+  type FormEvent,
+} from "react";
+
+import {
+  Search,
+  SlidersHorizontal,
+  LogOut,
+  ChevronDown,
+} from "lucide-react";
+
 import LanguageSwitcher from "../LanguageSwitcher";
 import FilterPanel from "../FilterPanel";
+
 import { useGetProfileQuery } from "../../services/userApi";
 import { getInitials } from "../../utils/getInitials";
-import {
-  LogOut,
-} from "lucide-react";
+
 import { useTranslation } from "react-i18next";
-import { ChevronDown } from 'lucide-react';
 
 import logo from "../../../public/logo-green.png";
 
 const Header = () => {
   const [query, setQuery] = useState("");
+
   const navigate = useNavigate();
   const location = useLocation();
+
   const { t } = useTranslation();
-  const [showHeader, setShowHeader] = useState(true);
+
+  const [showHeader, setShowHeader] =
+    useState(true);
+
   const lastScrollY = useRef(0);
-  const [showFilters, setShowFilters] = useState(false);
-  const { data: user } = useGetProfileQuery();
 
+  const [showFilters, setShowFilters] =
+    useState(false);
 
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] =
+    useState(false);
 
-  const allowedPaths = ["/movies", "/tvseries", "/anime", "/cartoons", "/newandpopular"];
-  const isFilterVisible = allowedPaths.includes(location.pathname);
+  const { data: user } =
+    useGetProfileQuery();
 
+  /*
+   * Сторінки, де показуємо кнопку фільтрів
+   */
+  const allowedPaths = [
+    "/movies",
+    "/tvseries",
+    "/anime",
+    "/cartoons",
+    "/newandpopular",
+  ];
 
+  const isFilterVisible =
+    allowedPaths.includes(
+      location.pathname
+    );
 
-  const handleSearch = (e: FormEvent) => {
+  /*
+   * SEARCH
+   */
+  const handleSearch = (
+    e: FormEvent
+  ) => {
     e.preventDefault();
+
     if (query.trim()) {
-      navigate(`/search?query=${encodeURIComponent(query.trim())}`);
+      navigate(
+        `/search?query=${encodeURIComponent(
+          query.trim()
+        )}`
+      );
+
       setQuery("");
     }
   };
 
+  /*
+   * HIDE / SHOW HEADER ON SCROLL
+   */
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > lastScrollY.current) {
+      if (
+        window.scrollY >
+        lastScrollY.current
+      ) {
         setShowHeader(false);
       } else {
         setShowHeader(true);
       }
-      lastScrollY.current = window.scrollY;
+
+      lastScrollY.current =
+        window.scrollY;
     };
 
+    window.addEventListener(
+      "scroll",
+      handleScroll
+    );
 
-    window.addEventListener("scroll", handleScroll);
-
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener(
+        "scroll",
+        handleScroll
+      );
+    };
   }, []);
 
-
+  /*
+   * MENU
+   *
+   * ВАЖЛИВО:
+   * Тут не повинно бути порожнього
+   * об'єкта або JSX-коментаря.
+   */
   const menuItems = [
-    { path: "/movies", label: t("menu.movies") },
-    { path: "/tvseries", label: t("menu.tvseries") },
-    { path: "/anime", label: t("menu.anime") },
-    { path: "/cartoons", label: t("menu.cartoons") },
-    {/* { path: "/newandpopular", label: t("menu.newAndPopular") },*/}
+    {
+      path: "/movies",
+      label: t("menu.movies"),
+    },
+    {
+      path: "/tvseries",
+      label: t("menu.tvseries"),
+    },
+    {
+      path: "/anime",
+      label: t("menu.anime"),
+    },
+    {
+      path: "/cartoons",
+      label: t("menu.cartoons"),
+    },
+
+    // Якщо потрібно додати:
+    // {
+    //   path: "/newandpopular",
+    //   label: t("menu.newAndPopular"),
+    // },
   ];
 
   return (
     <header
-      className={`fixed top-0 w-full bg-[#090612]/90 backdrop-blur-xl border-b border-white/10 z-20 transition-transform duration-300 ${
-        showHeader ? "translate-y-0" : "-translate-y-full"
-      }`}
+      className={`
+        fixed
+        top-0
+        w-full
+        bg-[#090612]/90
+        backdrop-blur-xl
+        border-b
+        border-white/10
+        z-20
+        transition-transform
+        duration-300
+        ${
+          showHeader
+            ? "translate-y-0"
+            : "-translate-y-full"
+        }
+      `}
     >
-      <div className="flex items-left justify-between py-4 px-24">
-        <div className="flex items-left">
+      <div
+        className="
+          flex
+          items-center
+          justify-between
+          py-4
+          px-24
+        "
+      >
+
+        {/* ================================= */}
+        {/* LOGO + NAVIGATION */}
+        {/* ================================= */}
+
+        <div className="flex items-center">
+
+          {/* LOGO */}
+
           <Link to="/home">
-            <img src={logo} alt="Logo" className="w-28" />
+            <img
+              src={logo}
+              alt="Logo"
+              className="w-28"
+            />
           </Link>
-          <nav className="hidden md:flex ml-24 items-center gap-6 text-white font-medium">
-            {menuItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`text-gray-300 hover:text-white transition no-underline ${
-                  location.pathname === item.path
-                    ? "text-white border-b-2 border-purple-500 pb-1"
-                    : ""
-                }`}
-              >
-                {item.label}
-              </Link>
-            ))}
+
+          {/* NAVIGATION */}
+
+          <nav
+            className="
+              hidden
+              md:flex
+              ml-24
+              items-center
+              gap-6
+              text-white
+              font-medium
+            "
+          >
+            {menuItems.map(
+              (item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`
+                    text-gray-300
+                    hover:text-white
+                    transition
+                    no-underline
+                    ${
+                      location.pathname ===
+                      item.path
+                        ? "text-white border-b-2 border-purple-500 pb-1"
+                        : ""
+                    }
+                  `}
+                >
+                  {item.label}
+                </Link>
+              )
+            )}
           </nav>
         </div>
 
-        <div className="flex items-center gap-3 relative">
+        {/* ================================= */}
+        {/* RIGHT SIDE */}
+        {/* ================================= */}
 
-          <form onSubmit={handleSearch} className="relative hidden md:block">
+        <div
+          className="
+            flex
+            items-center
+            gap-3
+            relative
+          "
+        >
+
+          {/* ================================= */}
+          {/* SEARCH */}
+          {/* ================================= */}
+
+          <form
+            onSubmit={handleSearch}
+            className="
+              relative
+              hidden
+              md:block
+            "
+          >
             <input
               type="text"
               placeholder="Search"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="w-40 px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 text-white text-sm placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-purple-500/60 focus:border-purple-500/40 transition"
+              onChange={(e) =>
+                setQuery(
+                  e.target.value
+                )
+              }
+              className="
+                w-40
+                px-3
+                py-1.5
+                rounded-lg
+                border
+                border-white/10
+                bg-white/5
+                text-white
+                text-sm
+                placeholder:text-gray-500
+                focus:outline-none
+                focus:ring-1
+                focus:ring-purple-500/60
+                focus:border-purple-500/40
+                transition
+              "
             />
+
             <button
               type="submit"
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-purple-400 transition"
+              className="
+                absolute
+                right-2
+                top-1/2
+                -translate-y-1/2
+                text-gray-400
+                hover:text-purple-400
+                transition
+              "
             >
               <Search size={18} />
             </button>
           </form>
+
+          {/* ================================= */}
+          {/* FILTER BUTTON */}
+          {/* ================================= */}
+
           {isFilterVisible && (
             <button
-            onClick={() => setShowFilters(true)}
-            className="text-gray-300 ml-3 hover:text-purple-400 transition"
-          >
-            <SlidersHorizontal size={22} />
-          </button>
+              onClick={() =>
+                setShowFilters(true)
+              }
+              className="
+                text-gray-300
+                ml-3
+                hover:text-purple-400
+                transition
+              "
+            >
+              <SlidersHorizontal
+                size={22}
+              />
+            </button>
           )}
 
-          {showFilters && <FilterPanel onClose={() => setShowFilters(false)} />}
+          {/* FILTER PANEL */}
+
+          {showFilters && (
+            <FilterPanel
+              onClose={() =>
+                setShowFilters(false)
+              }
+            />
+          )}
+
+          {/* ================================= */}
+          {/* LANGUAGE */}
+          {/* ================================= */}
 
           <LanguageSwitcher />
 
-         <div className="relative">
-  <button
-    onClick={() => setMenuOpen((p) => !p)}
-    className="flex items-center gap-1 focus:outline-none"
-  >
-    {user?.profilePictureUrl ? (
-      <img
-        src={user?.profilePictureUrl ? `http://localhost:5170/${user.profilePictureUrl}` : "/default-avatar.png"}
-        alt={user.fullName}
-        className="w-8 h-8 rounded-lg object-cover shadow-lg shadow-purple-950/30 border border-white/10"
-      />
-    ) : (
-      <div className="bg-gradient-to-br from-purple-600 to-violet-500 w-8 h-8 text-white rounded-lg flex items-center justify-center text-xs font-bold shadow-lg shadow-purple-950/30">
-        {getInitials(user?.fullName || "")}
-      </div>
-    )}
-    <ChevronDown
-      className="-mr-1 h-5 w-5 text-gray-400 transition-transform duration-200"
-      style={{ transform: menuOpen ? "rotate(180deg)" : "rotate(0deg)" }}
-    />
-  </button>
+          {/* ================================= */}
+          {/* PROFILE MENU */}
+          {/* ================================= */}
 
-  {menuOpen && (
-    <div
-      className="
-        absolute 
-        left-1/2 -translate-x-1/2 
-        mt-2 
-        w-48 
-        rounded-xl
-        border
-        border-white/10
-        bg-[#120D1D]/95
-        backdrop-blur-xl
-        text-white 
-        shadow-2xl
-        shadow-purple-950/40
-        py-1 
-        z-50
-      "
-    >
-      <Link
-        to="/profile"
-        className="flex no-underline items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-white/5 transition"
-      >
-        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-        </svg>
-        Account
-      </Link>
-      <div className="border-t border-white/10 my-2" />
-      <button
-        onClick={() => {
-          localStorage.removeItem("accessToken");
-          navigate("/login");
-        }}
-        className="flex items-center gap-2 px-4 py-2 w-full text-gray-300 hover:text-white hover:bg-white/5 rounded-sm transition"
-      >
-        <LogOut size={18} />
-        {t("profile.overview.logOut")}
-      </button>
-    </div>
-  )}
-</div>
+          <div className="relative">
+
+            {/* PROFILE BUTTON */}
+
+            <button
+              onClick={() =>
+                setMenuOpen(
+                  (prev) => !prev
+                )
+              }
+              className="
+                flex
+                items-center
+                gap-1
+                focus:outline-none
+              "
+            >
+
+              {/* AVATAR */}
+
+              {user?.profilePictureUrl ? (
+                <img
+                  src={`http://localhost:5170/${user.profilePictureUrl}`}
+                  alt={
+                    user.fullName ||
+                    "Profile"
+                  }
+                  className="
+                    w-8
+                    h-8
+                    rounded-lg
+                    object-cover
+                    shadow-lg
+                    shadow-purple-950/30
+                    border
+                    border-white/10
+                  "
+                />
+              ) : (
+                <div
+                  className="
+                    bg-gradient-to-br
+                    from-purple-600
+                    to-violet-500
+                    w-8
+                    h-8
+                    text-white
+                    rounded-lg
+                    flex
+                    items-center
+                    justify-center
+                    text-xs
+                    font-bold
+                    shadow-lg
+                    shadow-purple-950/30
+                  "
+                >
+                  {getInitials(
+                    user?.fullName ||
+                    ""
+                  )}
+                </div>
+              )}
+
+              {/* ARROW */}
+
+              <ChevronDown
+                className="
+                  -mr-1
+                  h-5
+                  w-5
+                  text-gray-400
+                  transition-transform
+                  duration-200
+                "
+                style={{
+                  transform:
+                    menuOpen
+                      ? "rotate(180deg)"
+                      : "rotate(0deg)",
+                }}
+              />
+            </button>
+
+            {/* ================================= */}
+            {/* DROPDOWN */}
+            {/* ================================= */}
+
+            {menuOpen && (
+              <div
+                className="
+                  absolute
+                  left-1/2
+                  -translate-x-1/2
+                  mt-2
+                  w-48
+                  rounded-xl
+                  border
+                  border-white/10
+                  bg-[#120D1D]/95
+                  backdrop-blur-xl
+                  text-white
+                  shadow-2xl
+                  shadow-purple-950/40
+                  py-1
+                  z-50
+                "
+              >
+
+                {/* ACCOUNT */}
+
+                <Link
+                  to="/profile"
+                  onClick={() =>
+                    setMenuOpen(false)
+                  }
+                  className="
+                    flex
+                    no-underline
+                    items-center
+                    gap-2
+                    px-4
+                    py-2
+                    text-gray-300
+                    hover:text-white
+                    hover:bg-white/5
+                    transition
+                  "
+                >
+                  <svg
+                    className="w-4 h-4"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="
+                        M12 12c2.21 0
+                        4-1.79 4-4s-1.79-4-4-4
+                        -4 1.79-4 4
+                        1.79 4 4 4zm0 2
+                        c-2.67 0-8 1.34-8 4v2h16v-2
+                        c0-2.66-5.33-4-8-4z
+                      "
+                    />
+                  </svg>
+
+                  Account
+                </Link>
+
+                {/* DIVIDER */}
+
+                <div
+                  className="
+                    border-t
+                    border-white/10
+                    my-2
+                  "
+                />
+
+                {/* LOGOUT */}
+
+                <button
+                  onClick={() => {
+                    localStorage.removeItem(
+                      "accessToken"
+                    );
+
+                    navigate("/login");
+
+                    setMenuOpen(false);
+                  }}
+                  className="
+                    flex
+                    items-center
+                    gap-2
+                    px-4
+                    py-2
+                    w-full
+                    text-gray-300
+                    hover:text-white
+                    hover:bg-white/5
+                    rounded-sm
+                    transition
+                  "
+                >
+                  <LogOut size={18} />
+
+                  {t(
+                    "profile.overview.logOut"
+                  )}
+                </button>
+
+              </div>
+            )}
+
+          </div>
+
         </div>
       </div>
     </header>
@@ -194,3 +550,4 @@ const Header = () => {
 };
 
 export default Header;
+
